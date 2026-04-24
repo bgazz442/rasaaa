@@ -9,13 +9,11 @@ import {
   ArrowRight, 
   Leaf, 
   Droplets, 
-  Sun, 
   Lightbulb,
   Filter,
   ChevronRight,
   Sprout,
-  BookOpen,
-  X
+  BookOpen
 } from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger);
@@ -23,7 +21,6 @@ gsap.registerPlugin(ScrollTrigger);
 const Fokus = () => {
   const [activeCategory, setActiveCategory] = useState('Semua');
   const [searchQuery, setSearchQuery] = useState('');
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
   
   const heroRef = useRef(null);
   const featuredRef = useRef(null);

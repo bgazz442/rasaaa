@@ -1,5 +1,5 @@
 import React from 'react';
-import { Leaf, Sprout, HandHeart, Users } from 'lucide-react';
+import { Leaf, Sprout, HandHeart } from 'lucide-react';
 import TeamProfileLanyard from '../components/TeamProfileLanyard';
 import DomeGallery from '../components/ui/DomeGallery';
 

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useLayoutEffect } from 'react';
+import React, { useState, useRef, useLayoutEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { gsap } from 'gsap';
 import { Menu, X, Bot } from 'lucide-react';

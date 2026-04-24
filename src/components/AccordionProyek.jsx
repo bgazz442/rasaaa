@@ -1,4 +1,4 @@
-import React, { useRef, useState, useImperativeHandle, forwardRef } from 'react';
+import React, { useRef, useImperativeHandle, forwardRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp } from 'lucide-react';
 

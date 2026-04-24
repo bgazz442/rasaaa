@@ -18,22 +18,7 @@ const ClickSpark = ({
   const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
   const easeOutQuart = (t) => 1 - Math.pow(1 - t, 4);
 
-  const getEasingFunction = (easeType) => {
-    switch (easeType) {
-      case 'ease-out':
-      case 'easeOut':
-        return easeOutQuad;
-      case 'ease-out-cubic':
-      case 'easeOutCubic':
-        return easeOutCubic;
-      case 'ease-out-quart':
-      case 'easeOutQuart':
-        return easeOutQuart;
-      default:
-        return easeOutQuad;
-    }
-  };
-
+  
   const createSpark = useCallback((x, y) => {
     const sparks = [];
     const angleStep = (2 * Math.PI) / sparkCount;
@@ -67,23 +52,37 @@ const ClickSpark = ({
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     const currentTime = Date.now();
-    const easeFn = getEasingFunction(easing);
+    
+    // Get the first spark's start time or use current time
+    const sparkStartTime = sparksRef.current.length > 0 ? 
+      sparksRef.current[0].startTime : currentTime;
+    const elapsed = currentTime - sparkStartTime;
+
+    // Get easing function
+    const getEasingFunction = (easeType) => {
+      switch (easeType) {
+        case 'ease-out':
+        case 'easeOut':
+          return easeOutQuad;
+        case 'ease-out-cubic':
+        case 'easeOutCubic':
+          return easeOutCubic;
+        case 'ease-out-quart':
+        case 'easeOutQuart':
+          return easeOutQuart;
+        default:
+          return easeOutQuad;
+      }
+    };
 
     // Update and draw sparks
     sparksRef.current = sparksRef.current.filter(spark => {
-      const elapsed = currentTime - spark.startTime;
       const progress = Math.min(elapsed / duration, 1);
+      const easedProgress = getEasingFunction(easing)(progress);
 
-      if (progress >= 1) return false;
-
-      const easedProgress = easeFn(progress);
-      
-      spark.x += spark.vx * 0.016;
-      spark.y += spark.vy * 0.016;
-      spark.vx *= 0.95;
-      spark.vy *= 0.95;
-      spark.opacity = 1 - easedProgress;
-      spark.size = spark.size * (1 - easedProgress * 0.5);
+      spark.x += spark.vx * easedProgress;
+      spark.y += spark.vy * easedProgress;
+      spark.opacity = 1 - progress;
 
       ctx.save();
       ctx.globalAlpha = spark.opacity;

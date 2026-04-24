@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sprout, HandHeart, BookOpen, Leaf } from 'lucide-react';
+import { Sprout, HandHeart, BookOpen } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import MediaCarousel from '../components/MediaCarousel';
 

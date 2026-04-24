@@ -11,10 +11,8 @@ import {
   X,
   Heart,
   Leaf,
-  ChevronRight,
   Trophy,
   Target,
-  Clock,
   Quote,
   Plus
 } from 'lucide-react';

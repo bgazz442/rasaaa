@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, Bot, Loader2 } from 'lucide-react';
+import { X, Send, Bot } from 'lucide-react';
 
 // ============================================
 // COMPONENT: TypewriterText
@@ -168,7 +168,6 @@ const ChatAI = ({ isOpen, onClose, isMobile }) => {
   
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
-  const typingTimeoutRef = useRef(null);
 
   // Auto scroll ke bawah
   const scrollToBottom = useCallback(() => {
