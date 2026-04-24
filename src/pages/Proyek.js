@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {useState, useRef } from 'react';
 import LightRays from '../components/LightRays';
 import FlowingMenu from '../components/FlowingMenu';
 import AccordionProyek from '../components/AccordionProyek';
