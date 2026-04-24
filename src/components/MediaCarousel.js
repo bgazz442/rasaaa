@@ -1,34 +1,34 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronLeft, ChevronRight, Play, Pause } from 'lucide-react';
 
+// Media items configuration - video first, then images
+const mediaItems = [
+  {
+    type: 'video',
+    src: '/video-kegiatan.mp4',
+    title: 'Video Kegiatan Selarasa',
+    poster: '/foto-kegiatan-1.jpg' // Use image as poster
+  },
+  {
+    type: 'image',
+    src: '/foto-kegiatan-1.jpg',
+    title: 'Foto Kegiatan 1',
+    alt: 'Kegiatan Selarasa'
+  },
+  {
+    type: 'image',
+    src: '/foto-kegiatan-2.png',
+    title: 'Foto Kegiatan 2',
+    alt: 'Aktivitas Selarasa'
+  }
+];
+
 const MediaCarousel = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const [isLoaded, setIsLoaded] = useState(false);
   const videoRef = useRef(null);
   const containerRef = useRef(null);
-
-  // Media items configuration - video first, then images
-  const mediaItems = [
-    {
-      type: 'video',
-      src: '/video-kegiatan.mp4',
-      title: 'Video Kegiatan Selarasa',
-      poster: '/foto-kegiatan-1.jpg' // Use image as poster
-    },
-    {
-      type: 'image',
-      src: '/foto-kegiatan-1.jpg',
-      title: 'Foto Kegiatan 1',
-      alt: 'Kegiatan Selarasa'
-    },
-    {
-      type: 'image',
-      src: '/foto-kegiatan-2.png',
-      title: 'Foto Kegiatan 2',
-      alt: 'Aktivitas Selarasa'
-    }
-  ];
 
   const nextSlide = () => {
     setCurrentIndex((prev) => (prev + 1) % mediaItems.length);
@@ -49,22 +49,34 @@ const MediaCarousel = () => {
     if (videoRef.current) {
       if (isPlaying) {
         videoRef.current.pause();
+        setIsPlaying(false);
       } else {
-        videoRef.current.play();
+        // Unmute on user interaction (required for mobile audio)
+        videoRef.current.muted = false;
+        videoRef.current.volume = 0.3;
+        videoRef.current.play().then(() => {
+          setIsPlaying(true);
+        }).catch((err) => {
+          console.error('[Video] Play failed:', err.message);
+        });
       }
-      setIsPlaying(!isPlaying);
     }
   };
 
-  // Auto-play video when it's the current slide
+  // Auto-play video when it's the current slide (muted autoplay required for mobile)
   useEffect(() => {
     const currentItem = mediaItems[currentIndex];
     if (currentItem.type === 'video' && videoRef.current) {
-      videoRef.current.play().catch(() => {
+      // Ensure video is muted for mobile autoplay
+      videoRef.current.muted = true;
+      videoRef.current.play().then(() => {
+        setIsPlaying(true);
+        console.log('[Video] Autoplay success on mobile');
+      }).catch((err) => {
+        console.log('[Video] Autoplay blocked:', err.message);
         // Auto-play blocked, show play button
         setIsPlaying(false);
       });
-      setIsPlaying(true);
     }
   }, [currentIndex]);
 
@@ -104,10 +116,16 @@ const MediaCarousel = () => {
                 // Set volume to 30% (not too loud)
                 e.target.volume = 0.3;
               }}
-              onError={() => setIsLoaded(true)}
+              onError={(e) => {
+                console.error('[Video] Error loading video:', e);
+                setIsLoaded(true);
+              }}
               playsInline
+              webkit-playsinline="true"
+              muted
               loop={false}
-              preload="metadata"
+              preload="auto"
+              controls={false}
               style={{ willChange: 'transform' }}
             />
             {/* Video Controls Overlay */}

@@ -11,12 +11,28 @@ const EntryGate = ({ onComplete }) => {
   const MIN_CHARS = 10;
   const MAX_CHARS = 500;
 
+  // Lock body scroll when EntryGate is open
   useEffect(() => {
-    // Check if user has already submitted
+    const originalBodyOverflow = document.body.style.overflow;
+    const originalHtmlOverflow = document.documentElement.style.overflow;
+    
+    // Lock scroll
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
+    return () => {
+      // Restore
+      document.body.style.overflow = originalBodyOverflow;
+      document.documentElement.style.overflow = originalHtmlOverflow;
+    };
+  }, []);
+
+  useEffect(() => {
     const hasSubmitted = localStorage.getItem('gudskul_entry_answer');
     if (hasSubmitted) {
       onComplete();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [onComplete]);
 
   const handleChange = (e) => {
@@ -31,7 +47,6 @@ const EntryGate = ({ onComplete }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validation
     if (!answer.trim()) {
       setError('Silakan tulis jawaban Anda terlebih dahulu.');
       return;
@@ -45,11 +60,9 @@ const EntryGate = ({ onComplete }) => {
     setIsSubmitting(true);
     setError('');
 
-    // Simulate API call
     try {
       await new Promise((resolve) => setTimeout(resolve, 1500));
 
-      // Create answer object
       const answerData = {
         id: Date.now().toString(),
         content: answer.trim(),
@@ -57,18 +70,13 @@ const EntryGate = ({ onComplete }) => {
         deviceId: localStorage.getItem('gudskul_device_id') || generateDeviceId(),
       };
 
-      // Save to localStorage (mock database)
       const existingAnswers = JSON.parse(localStorage.getItem('gudskul_answers') || '[]');
       existingAnswers.unshift(answerData);
       localStorage.setItem('gudskul_answers', JSON.stringify(existingAnswers));
-
-      // Mark user as having submitted
       localStorage.setItem('gudskul_entry_answer', JSON.stringify(answerData));
 
-      // Show success animation
       setShowSuccess(true);
 
-      // Close gate after success animation
       setTimeout(() => {
         onComplete();
       }, 2000);
@@ -84,140 +92,206 @@ const EntryGate = ({ onComplete }) => {
     return id;
   };
 
+  // Overlay styles - using inline styles for guaranteed positioning
+  const overlayStyle = {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    width: '100%',
+    height: '100%',
+    minHeight: '100vh',
+    minHeight: '100dvh',
+    zIndex: 9999,
+    overflow: 'auto',
+    overscrollBehavior: 'none',
+    touchAction: 'pan-y',
+    WebkitOverflowScrolling: 'touch',
+  };
+
+  const contentStyle = {
+    zIndex: 10,
+    width: '100%',
+    minHeight: '100vh',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    padding: '16px',
+    boxSizing: 'border-box',
+    overflow: 'visible',
+    textAlign: 'center',
+  };
+
+  const boxStyle = {
+    width: '100%',
+    maxWidth: '600px',
+    margin: '0 auto',
+    flexShrink: 0,
+    textAlign: 'center',
+  };
+
   return (
-    <div className="fixed inset-0 z-[9999] overflow-hidden">
-      {/* Background with blur effect */}
-      <div className="absolute inset-0 bg-gradient-to-br from-earth-dark via-earth-brown to-earth-dark">
-        {/* Animated background elements */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-10 left-10 w-64 h-64 bg-earth-green/10 rounded-full blur-3xl animate-float"></div>
-          <div className="absolute bottom-20 right-20 w-80 h-80 bg-earth-sand/10 rounded-full blur-3xl animate-float-delayed"></div>
-          <div className="absolute top-1/2 left-1/3 w-48 h-48 bg-leaf-500/10 rounded-full blur-3xl animate-float"></div>
-        </div>
-        
-        {/* Pattern overlay */}
+    <>
+      {/* Mobile-only CSS for perfect centering */}
+      <style>{`
+        @media (max-width: 768px) {
+          .entrygate-content-mobile {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            height: 100dvh !important;
+            min-height: 100vh !important;
+            min-height: 100dvh !important;
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            padding: 0 !important;
+            box-sizing: border-box !important;
+            overflow: hidden !important;
+            -webkit-overflow-scrolling: touch !important;
+          }
+          .entrygate-box-mobile {
+            width: 90% !important;
+            max-width: 400px !important;
+            margin: 0 auto !important;
+            flex-shrink: 0 !important;
+            text-align: center !important;
+            box-sizing: border-box !important;
+          }
+          .entrygate-box-mobile > * {
+            margin-left: auto !important;
+            margin-right: auto !important;
+          }
+        }
+      `}</style>
+    <div style={overlayStyle} className="bg-gradient-to-br from-earth-dark via-earth-brown to-earth-dark">
+      {/* Animated Background */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-10 left-10 w-64 h-64 bg-earth-green/10 rounded-full blur-3xl animate-float"></div>
+        <div className="absolute bottom-20 right-20 w-80 h-80 bg-earth-sand/10 rounded-full blur-3xl animate-float-delayed"></div>
+        <div className="absolute top-1/2 left-1/3 w-48 h-48 bg-leaf-500/10 rounded-full blur-3xl animate-float"></div>
         <div className="absolute inset-0 opacity-5 pattern-dots"></div>
       </div>
 
-      {/* Content Container */}
-      <div className="relative z-10 h-screen flex flex-col items-center justify-center p-4 overflow-y-auto">
-        <div className="w-full max-w-2xl -mt-16 md:-mt-20">
-          {/* Logo Only */}
-          <div className="text-center mb-6">
+      {/* Content */}
+      <div style={contentStyle} className="entrygate-content-mobile">
+        <div style={boxStyle} className="entrygate-box-mobile">
+          {/* Logo */}
+          <div className="text-center mb-4 md:mb-6">
             <div className="inline-flex items-center justify-center">
-              <div className="w-16 h-16 bg-gradient-to-br from-earth-sand to-earth-cream rounded-full flex items-center justify-center shadow-lg">
-                <Leaf className="w-8 h-8 text-earth-dark" />
+              <div className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-earth-sand to-earth-cream rounded-full flex items-center justify-center shadow-lg">
+                <Leaf className="w-7 h-7 md:w-8 md:h-8 text-earth-dark" />
               </div>
             </div>
           </div>
 
-          {/* Main Card */}
-          <div className="bg-white/10 backdrop-blur-md rounded-3xl p-6 md:p-10 border border-white/20 shadow-2xl mb-8">
+          {/* Card */}
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl md:rounded-3xl p-4 md:p-8 border border-white/20 shadow-2xl w-full">
             {!showSuccess ? (
               <>
                 {/* Question */}
-                <div className="text-center mb-8">
-                  <div className="inline-flex items-center gap-2 mb-4">
-                    <Sprout className="w-6 h-6 text-earth-sand" />
-                    <Sparkles className="w-5 h-5 text-earth-sand/60" />
+                <div className="text-center mb-4 md:mb-6">
+                  <div className="inline-flex items-center gap-2 mb-2 md:mb-3">
+                    <Sprout className="w-5 h-5 md:w-6 md:h-6 text-earth-sand" />
+                    <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-earth-sand/60" />
                   </div>
-                  <h2 className="text-xl md:text-2xl lg:text-3xl font-serif font-semibold text-white leading-relaxed">
+                  <h2 className="text-base sm:text-lg md:text-2xl font-serif font-semibold text-white leading-relaxed">
                     "Menurutmu, seperti apa
-                    <br />
+                    <br className="hidden sm:block" />
                     <span className="text-earth-sand">masa depan Selarasa?</span>"
                   </h2>
-                  <p className="mt-4 text-earth-cream/60 text-sm">
-                    Bagikan visi dan harapan Anda untuk komunitas kita
+                  <p className="mt-2 md:mt-3 text-earth-cream/60 text-xs md:text-sm">
+                    Bagikan visi dan harapan Anda
                   </p>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  {/* Textarea */}
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="relative">
                     <textarea
                       value={answer}
                       onChange={handleChange}
-                      placeholder="Tulis jawabanmu di sini... (minimal 10 karakter)"
-                      rows={4}
-                      className="w-full px-6 py-4 bg-white/5 border border-white/20 rounded-2xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-earth-sand/50 focus:border-transparent transition-all resize-none text-base leading-relaxed"
+                      placeholder="Tulis jawabanmu di sini... (min 10 karakter)"
+                      rows={3}
+                      className="w-full px-3 md:px-4 py-2 md:py-3 bg-white/5 border border-white/20 rounded-xl md:rounded-2xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-earth-sand/50 focus:border-transparent transition-all resize-none text-sm leading-relaxed"
                       disabled={isSubmitting}
                     />
-                    {/* Character count */}
-                    <div className="absolute bottom-3 right-4 text-xs text-white/40">
+                    <div className="absolute bottom-2 right-3 text-xs text-white/40">
                       <span className={charCount < MIN_CHARS ? 'text-red-400' : 'text-green-400'}>
                         {charCount}
                       </span>
-                      <span> / {MAX_CHARS}</span>
+                      <span>/{MAX_CHARS}</span>
                     </div>
                   </div>
 
-                  {/* Error Message */}
                   {error && (
-                    <div className="p-4 bg-red-500/20 border border-red-500/30 rounded-xl text-red-200 text-sm text-center">
+                    <div className="p-3 bg-red-500/20 border border-red-500/30 rounded-lg text-red-200 text-xs text-center">
                       {error}
                     </div>
                   )}
 
-                  {/* Submit Button */}
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-4 px-8 bg-gradient-to-r from-earth-sand to-earth-cream text-earth-dark font-semibold rounded-2xl hover:shadow-xl hover:shadow-earth-sand/20 transition-all duration-300 flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group"
+                    className="w-full py-3 md:py-4 px-6 bg-gradient-to-r from-earth-sand to-earth-cream text-earth-dark font-semibold rounded-xl md:rounded-2xl hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
                   >
                     {isSubmitting ? (
                       <>
-                        <div className="w-5 h-5 border-2 border-earth-dark/30 border-t-earth-dark rounded-full animate-spin"></div>
-                        <span>Menyimpan...</span>
+                        <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-earth-dark/30 border-t-earth-dark rounded-full animate-spin"></div>
+                        <span className="text-sm">Menyimpan...</span>
                       </>
                     ) : (
                       <>
-                        <span>Kirim & Masuk</span>
-                        <Send className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                        <span className="text-sm md:text-base">Kirim & Masuk</span>
+                        <Send className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
                       </>
                     )}
                   </button>
                 </form>
 
-                {/* Info */}
-                <div className="mt-6 text-center">
+                <div className="mt-4 text-center">
                   <p className="text-xs text-earth-cream/40">
-                    Jawaban Anda akan menjadi bagian dari koleksi visi komunitas Selarasa
+                    Jawaban Anda akan menjadi bagian dari koleksi visi Selarasa
                   </p>
                 </div>
               </>
             ) : (
-              /* Success State */
-              <div className="text-center py-8 animate-fade-in">
-                <div className="w-20 h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
-                  <Sparkles className="w-10 h-10 text-green-400" />
+              <div className="text-center py-6 md:py-8 animate-fade-in">
+                <div className="w-16 h-16 md:w-20 md:h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
+                  <Sparkles className="w-8 h-8 md:w-10 md:h-10 text-green-400" />
                 </div>
-                <h3 className="text-2xl font-serif font-semibold text-white mb-4">
+                <h3 className="text-xl md:text-2xl font-serif font-semibold text-white mb-2 md:mb-4">
                   Terima Kasih!
                 </h3>
-                <p className="text-earth-cream/70 mb-2">
-                  Visi Anda telah tersimpan dan menjadi bagian dari Selarasa.
+                <p className="text-earth-cream/70 text-sm mb-2">
+                  Visi Anda telah tersimpan.
                 </p>
-                <p className="text-earth-sand text-sm">
+                <p className="text-earth-sand text-xs md:text-sm">
                   Mengarahkan ke website...
                 </p>
               </div>
             )}
           </div>
 
-          {/* Footer note */}
-          <div className="mt-auto pt-4 pb-2 text-center">
+          {/* Footer */}
+          <div className="mt-4 text-center">
             <p className="text-xs text-earth-cream/30">
-              Selarasa Kolektif • Jagakarsa, Jakarta Selatan
+              Selarasa Kolektif • Jagakarsa
             </p>
           </div>
         </div>
       </div>
 
-      {/* Reset Button (Development/Testing Only) */}
+      {/* Reset Button */}
       <button
         onClick={() => {
-          if (window.confirm('Reset Entry Gate? Ini akan menghapus data lokal.')) {
+          if (window.confirm('Reset Entry Gate?')) {
             localStorage.removeItem('gudskul_entry_answer');
             localStorage.removeItem('gudskul_answers');
             localStorage.removeItem('gudskul_liked_posts');
@@ -225,12 +299,14 @@ const EntryGate = ({ onComplete }) => {
             window.location.reload();
           }
         }}
-        className="absolute bottom-4 right-4 text-xs text-white/20 hover:text-white/50 transition-colors"
-        title="Reset Entry Gate (Testing)"
+        style={{ position: 'absolute', bottom: '12px', right: '12px', zIndex: 20 }}
+        className="text-xs text-white/20 hover:text-white/50 transition-colors"
+        title="Reset (Testing)"
       >
         Reset
       </button>
     </div>
+    </>
   );
 };
 

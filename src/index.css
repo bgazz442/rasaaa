@@ -5,17 +5,179 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Lora:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
 
 @layer base {
+
+  /* Global box-sizing */
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
   body {
     @apply bg-earth-cream text-earth-dark font-sans antialiased overflow-x-hidden;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: auto;
   }
-  
-  h1, h2, h3, h4, h5, h6 {
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     @apply font-serif text-earth-dark;
   }
-  
+
   /* Smooth Scroll */
   html {
     scroll-behavior: smooth;
+    overscroll-behavior: none;
+  }
+
+  /* Images and videos responsive */
+  img,
+  video {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* ========== MOBILE FULL-WIDTH LAYOUT (≤768px) ========== */
+@media (max-width: 768px) {
+
+  /* Reset untuk full-width */
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    width: 100%;
+  }
+
+  /* Semua section full-width - tanpa padding horizontal (diatur per komponen) */
+  section,
+  .section,
+  main,
+  .main,
+  article,
+  .article {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Container full-width */
+  .container,
+  .wrapper,
+  .content,
+  .page-content {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Hindari 100vw yang bisa cause overflow */
+  [class*="w-screen"],
+  [class*="w-full"] {
+    width: 100% !important;
+  }
+
+  /* Elemen gambar/video tidak melebar */
+  img,
+  video,
+  canvas,
+  svg {
+    max-width: 100% !important;
+    height: auto !important;
+  }
+
+  /* Safe area untuk notch/bezel HP - hanya top/bottom, horizontal diatur per container */
+  body {
+    overflow-x: hidden;
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Padding diatur per komponen masing-masing, bukan global */
+
+  /* Images responsive */
+  img,
+  video,
+  iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* ========== NAVBAR ========== */
+  nav {
+    padding-left: 16px;
+    padding-right: 16px;
+    padding-top: env(safe-area-inset-top);
+  }
+
+  /* ========== MOBILE MENU PANEL ========== */
+  .mobile-menu-container {
+    width: 260px;
+    max-width: 80vw;
+    padding: 20px;
+    right: 0;
+    left: auto;
+    top: 0;
+    bottom: 0;
+    border-radius: 16px 0 0 16px;
+    max-height: 100vh;
+    overflow-y: auto;
+    position: fixed;
+    z-index: 10000;
+    background: white;
+    box-shadow: -4px 0 20px rgba(0, 0, 0, 0.1);
+  }
+
+  /* ========== MOBILE MENU GRID ========== */
+  .mobile-menu-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  /* ========== MENU ITEM STYLING ========== */
+  .mobile-menu-item {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    font-size: 15px;
+    border-radius: 8px;
+    text-decoration: none;
+    text-align: left;
+    transition: background-color 0.2s;
+  }
+
+  .mobile-menu-item:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  /* ========== AJAKAN TERLIBAT ========== */
+  .mobile-menu-cta {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Extra small devices */
+@media (max-width: 480px) {
+  .mobile-menu-container {
+    width: 85vw;
+    max-width: 240px;
+  }
+
+  .mobile-menu-grid a {
+    font-size: 14px;
+    padding: 10px 12px;
   }
 }
 
@@ -23,6 +185,72 @@
   .glass-nav {
     @apply bg-earth-cream/70 backdrop-blur-md border-b border-earth-brown/10 shadow-sm transition-all duration-300;
   }
+}
+
+/* EntryGate Overlay - Fixed positioning to cover entire screen */
+.entrygate-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  height: 100dvh;
+  /* Dynamic viewport height for mobile */
+  z-index: 9999;
+  overflow: hidden;
+  overscroll-behavior: none;
+  touch-action: none;
+  -webkit-overflow-scrolling: auto;
+}
+
+/* Content container - Flex centering */
+.entrygate-content {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1rem;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+/* Question box - Centered with max-width */
+.entrygate-box {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+  transform: translateX(0);
+}
+
+/* Mobile adjustments for entrygate-responsive class */
+@media (max-width: 768px) {
+  .entrygate-responsive {
+    max-width: 100%;
+    /* Geser ke kiri sedikit untuk centering di HP */
+    transform: translateX(-3%);
+  }
+}
+
+@media (max-width: 480px) {
+  .entrygate-responsive {
+    transform: translateX(-5%);
+    padding: 0 0.5rem;
+  }
+}
+
+/* Ensure proper centering on larger screens */
+@media (min-width: 769px) {
+  .entrygate-responsive {
+    transform: translateX(0);
+  }
+}
+
+/* Prevent scroll on the overlay itself */
+.entrygate-overlay * {
+  overscroll-behavior: none;
 }
 
 /* Custom Scrollbar for better aesthetic */
@@ -41,4 +269,31 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: #8C9A5B;
+}
+
+/* CardNav Mobile - Hardware Acceleration */
+@media (max-width: 768px) {
+
+  .card-nav-container,
+  .card-nav-container>div {
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+
+  .card-nav-container img,
+  [class*="card-nav"] img {
+    height: 20px !important;
+    width: auto !important;
+    max-width: 40px !important;
+    object-fit: contain !important;
+  }
+
+  /* Force collapsed state on load */
+  .card-nav-container>div,
+  [class*="card-nav"]>div {
+    width: 92% !important;
+    max-width: 500px !important;
+    border-radius: 24px !important;
+  }
 }

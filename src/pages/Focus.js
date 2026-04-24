@@ -54,7 +54,6 @@ const Focus = () => {
       ],
       initiatives: [
         'Koperasi Pangan',
-        'Sistem Barter',
         'Kebun Bersama',
         'Dapur Komunal',
       ],

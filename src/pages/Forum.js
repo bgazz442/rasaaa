@@ -57,7 +57,7 @@ const Forum = () => {
     };
 
     fetchAnswers();
-  }, []);
+  }, [setAnswers, setIsLoading, setLikedPosts, setTotalCount]);
 
   // Close share menu when clicking outside
   useEffect(() => {
@@ -69,7 +69,7 @@ const Forum = () => {
 
     document.addEventListener('click', handleClickOutside);
     return () => document.removeEventListener('click', handleClickOutside);
-  }, []);
+  }, [setOpenShareMenu]);
 
   const formatDate = (timestamp) => {
     const date = new Date(timestamp);

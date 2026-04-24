@@ -14,7 +14,7 @@ const Navbar = () => {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+  }, [setIsScrolled]);
 
   const navLinks = [
     { name: 'Tentang', path: '/about' },
@@ -70,31 +70,53 @@ const Navbar = () => {
         </div>
       </div>
 
-      {/* Mobile Menu */}
+      {/* Mobile Menu Overlay */}
       {isMobileMenuOpen && (
-        <div className="md:hidden bg-earth-cream shadow-lg border-t border-earth-brown/10 absolute w-full animate-fade-in">
-          <div className="px-4 pt-2 pb-6 space-y-1">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.path}
+        <>
+          {/* Backdrop */}
+          <div 
+            className="md:hidden fixed inset-0 bg-black/50 z-40"
+            onClick={() => setIsMobileMenuOpen(false)}
+          />
+          {/* Menu Panel */}
+          <div className="md:hidden bg-earth-cream/95 backdrop-blur-lg shadow-xl border-l border-earth-brown/10 fixed top-0 right-0 h-full mobile-menu-container z-50">
+            <div className="flex justify-end mb-4">
+              <button
                 onClick={() => setIsMobileMenuOpen(false)}
-                className="block px-3 py-3 text-base font-medium text-earth-dark hover:bg-earth-sand/20 hover:text-earth-green rounded-md"
+                className="text-earth-dark hover:text-earth-green p-2"
               >
-                {link.name}
-              </Link>
-            ))}
-            <div className="pt-4">
-               <Link 
-                  to="/partisipasi"
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+            <div className="mobile-menu-grid menu-list">
+              {navLinks.map((link, index) => (
+                <Link
+                  key={link.name}
+                  to={link.path}
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="block w-full text-center bg-earth-brown text-earth-cream px-5 py-3 rounded-md text-base font-medium hover:bg-earth-dark transition-all"
+                  className={`mobile-menu-item font-medium transition-colors hover:bg-earth-sand/20 hover:text-earth-green rounded-md
+                    ${location.pathname === link.path ? 'text-earth-green font-semibold bg-earth-sand/10' : 'text-earth-dark/80'}
+                  `}
+                  style={{
+                    textAlign: index % 2 === 0 ? 'left' : 'right',
+                    justifySelf: index % 2 === 0 ? 'start' : 'end'
+                  }}
                 >
-                  Ajakan Terlibat
+                  {link.name}
                 </Link>
+              ))}
+              <div className="mobile-menu-cta pt-2">
+                 <Link 
+                    to="/partisipasi"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                    className="block w-full text-center bg-earth-brown text-earth-cream px-4 py-3 rounded-lg text-sm font-medium hover:bg-earth-dark transition-all"
+                  >
+                    Ajakan Terlibat
+                  </Link>
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
     </nav>
   );

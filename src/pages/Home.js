@@ -7,7 +7,8 @@ const Home = () => {
   return (
     <div className="animate-fade-in w-full">
       {/* Hero Section */}
-      <section className="relative pt-24 pb-16 md:pt-32 md:pb-20 lg:pt-48 lg:pb-32 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto flex flex-col lg:flex-row items-center justify-between min-h-[90vh]">
+      <section className="relative pt-24 pb-16 md:pt-32 md:pb-20 lg:pt-48 lg:pb-32 w-full">
+        <div className="w-full px-4 md:max-w-7xl md:mx-auto md:px-8 flex flex-col lg:flex-row items-center justify-between min-h-[90vh]">
         <div className="lg:w-1/2 z-10 lg:pr-12">
           <div className="inline-flex items-center space-x-2 bg-earth-sand/20 text-earth-green px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Sprout className="w-4 h-4" />
@@ -50,12 +51,13 @@ const Home = () => {
                 </div>
              </div>
           </div>
+          </div>
         </div>
       </section>
 
       {/* Nilai & Praktik Highlight Section */}
       <section className="py-16 md:py-24 bg-earth-sand/10">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="w-full px-4 md:max-w-7xl md:mx-auto md:px-8">
           <div className="text-center max-w-2xl mx-auto mb-16">
             <h2 className="text-3xl lg:text-4xl font-serif text-earth-dark mb-6">Praktik Keseharian Kami</h2>
             <p className="text-earth-dark/70">
@@ -99,7 +101,7 @@ const Home = () => {
               </div>
               <h3 className="text-xl font-serif font-semibold text-earth-dark mb-3">Kolektif Solidaritas</h3>
               <p className="text-earth-dark/70 text-sm leading-relaxed mb-6">
-                Menumbuhkan hubungan antarmanusia melalui sistem barter, kolaborasi seni, dan distribusi surplus pangan lokal.
+                Menumbuhkan hubungan antarmanusia melalui kolaborasi seni, dan distribusi surplus pangan lokal.
               </p>
               <Link to="/jaringan" className="text-earth-brown font-medium text-sm hover:text-earth-green inline-flex items-center">
                 Lihat Ekosistem &rarr;
@@ -111,15 +113,26 @@ const Home = () => {
 
       {/* Storytelling Product Teaser */}
       <section className="py-16 md:py-24 bg-earth-dark text-earth-cream overflow-hidden">
-         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row items-center justify-between gap-12">
+         <div className="w-full px-4 md:max-w-7xl md:mx-auto md:px-8 flex flex-col md:flex-row items-center justify-between gap-12">
             <div className="md:w-1/2 relative">
-               <div className="aspect-[4/5] bg-earth-brown rounded-full w-full max-w-sm mx-auto flex items-center justify-center overflow-hidden border-8 border-earth-cream/5 relative">
-                  <Leaf className="w-32 h-32 text-earth-cream/20" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-earth-dark/60 to-transparent"></div>
-                  <div className="absolute bottom-8 left-8 right-8 text-center">
-                    <p className="font-serif italic text-lg text-earth-sand">Katalog Cerita</p>
-                  </div>
-               </div>
+               <Link to="/katalog" className="block group">
+                 <div className="aspect-[4/5] bg-earth-brown rounded-full w-full max-w-sm mx-auto flex items-center justify-center overflow-hidden border-8 border-earth-cream/5 relative cursor-pointer transition-transform duration-500 group-hover:scale-[1.02]">
+                    <img 
+                      src="/assets/katalog-teaser.png" 
+                      alt="Katalog Cerita Selarasa"
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                      onError={(e) => {
+                        e.target.style.display = 'none';
+                        e.target.parentElement.innerHTML = '<svg class="w-32 h-32 text-earth-cream/20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>';
+                      }}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-earth-dark/60 to-transparent opacity-60 group-hover:opacity-40 transition-opacity"></div>
+                    <div className="absolute bottom-8 left-8 right-8 text-center">
+                      <p className="font-serif italic text-lg text-earth-sand">Katalog Cerita</p>
+                      <p className="text-xs text-earth-cream/50 mt-2">Klik untuk melihat</p>
+                    </div>
+                 </div>
+               </Link>
             </div>
             <div className="md:w-1/2">
               <h2 className="text-4xl lg:text-5xl font-serif mb-6 leading-tight">

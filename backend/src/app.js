@@ -73,6 +73,7 @@ app.get('/api/health', (req, res) => {
 // API Routes
 // app.use('/api/auth', require('../authRoutes')); // Uncomment when auth routes are ready
 // app.use('/api/content', require('../contentRoutes')); // Uncomment when content routes are ready
+app.use('/api/ai', require('./routes/aiRoutes'));
 
 // Test endpoint
 app.get('/api/test', (req, res) => {

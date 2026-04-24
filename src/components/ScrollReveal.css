@@ -1,0 +1,48 @@
+/* ScrollReveal Component - React Bits CSS */
+
+.scroll-reveal {
+  margin: 20px 0;
+  will-change: transform;
+}
+
+.scroll-reveal-text {
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  line-height: 1.7;
+  font-weight: 400;
+  color: #5C5548;
+}
+
+/* Word styling */
+.word {
+  display: inline-block;
+  will-change: opacity, filter;
+  margin-right: 0.25em;
+}
+
+/* Desktop optimizations */
+@media (min-width: 768px) {
+  .scroll-reveal-text {
+    font-size: clamp(1.6rem, 2.5vw, 2.2rem);
+    line-height: 1.8;
+  }
+}
+
+/* Mobile optimizations - reduced blur for performance */
+@media (max-width: 767px) {
+  .scroll-reveal-text {
+    font-size: 1.25rem;
+    line-height: 1.7;
+  }
+  
+  .word {
+    /* Reduce blur calculations on mobile */
+    filter: none !important;
+  }
+}
+
+/* Large screens */
+@media (min-width: 1200px) {
+  .scroll-reveal-text {
+    font-size: 1.8rem;
+  }
+}
