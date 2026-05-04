@@ -1,15 +1,16 @@
 import React from 'react';
 import { useIsMobile } from '../hooks/useIsMobile';
-import CardNav from './CardNav';
-import LiquidGlassNavIOS from './LiquidGlassNavIOS';
+import EnhancedCardNav from './EnhancedCardNav';
+import EnhancedLiquidGlassNav from './EnhancedLiquidGlassNav';
 
 const NavbarWrapper = () => {
   const isMobile = useIsMobile();
 
-  // Conditional rendering: CardNav for mobile, LiquidGlassNavIOS for desktop
+  // Enhanced navbar with React Bits GlassSurface for both mobile and desktop
+  // Provides ultra-smooth iOS-like liquid glass effects with advanced distortion
   return (
     <>
-      {isMobile ? <CardNav /> : <LiquidGlassNavIOS />}
+      {isMobile ? <EnhancedCardNav /> : <EnhancedLiquidGlassNav />}
     </>
   );
 };

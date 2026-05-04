@@ -48,10 +48,11 @@ const MediaCarousel = () => {
   const togglePlay = () => {
     if (videoRef.current) {
       if (isPlaying) {
+        // Invisible stop - pause video
         videoRef.current.pause();
         setIsPlaying(false);
       } else {
-        // Unmute on user interaction (required for mobile audio)
+        // Play sebaliknya dengan suara
         videoRef.current.muted = false;
         videoRef.current.volume = 0.3;
         videoRef.current.play().then(() => {
@@ -63,15 +64,16 @@ const MediaCarousel = () => {
     }
   };
 
-  // Auto-play video when it's the current slide (muted autoplay required for mobile)
+  // Auto-play video with sound when it's the current slide
   useEffect(() => {
     const currentItem = mediaItems[currentIndex];
     if (currentItem.type === 'video' && videoRef.current) {
-      // Ensure video is muted for mobile autoplay
-      videoRef.current.muted = true;
+      // Auto-play with sound enabled
+      videoRef.current.muted = false;
+      videoRef.current.volume = 0.3;
       videoRef.current.play().then(() => {
         setIsPlaying(true);
-        console.log('[Video] Autoplay success on mobile');
+        console.log('[Video] Autoplay with sound success');
       }).catch((err) => {
         console.log('[Video] Autoplay blocked:', err.message);
         // Auto-play blocked, show play button

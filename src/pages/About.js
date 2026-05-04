@@ -1,61 +1,177 @@
 import React from 'react';
-import { Leaf, Sprout, HandHeart } from 'lucide-react';
-import TeamProfileLanyard from '../components/TeamProfileLanyard';
-import DomeGallery from '../components/ui/DomeGallery';
+import { Users, School, Phone, MapPin, Globe, ExternalLink, Code } from 'lucide-react';
+
+const teamMembers = [
+  { name: 'Anggota 1', role: 'Frontend Developer' },
+  { name: 'Anggota 2', role: 'UI/UX Designer' },
+  { name: 'Anggota 3', role: 'Backend Developer' },
+];
+
+const portfolioItems = [
+  {
+    title: 'Website Selarasa',
+    description: 'Website komunitas kolektif pangan lokal dan urban farming berbasis React.',
+    tech: 'React, Tailwind CSS, Node.js',
+    url: '/',
+  },
+  {
+    title: 'Portfolio SMKN 20',
+    description: 'Website profil sekolah dengan informasi jurusan, kegiatan, dan galeri.',
+    tech: 'HTML, CSS, JavaScript',
+    url: '#',
+  },
+];
 
 const About = () => {
   return (
-    <div className="animate-fade-in w-full pb-24">
-      {/* Hero About */}
-      <section className="bg-earth-dark text-earth-cream pt-24 pb-16 md:pt-32 md:pb-20">
-        <div className="w-full px-4 md:max-w-7xl md:mx-auto md:px-8">
-          <div className="max-w-3xl mx-auto text-center">
-            <Leaf className="w-12 h-12 text-earth-sand mx-auto mb-6" />
-            <h1 className="text-3xl md:text-5xl lg:text-6xl font-serif mb-4 md:mb-6 leading-tight">
-              Cerita Tentang <span className="text-earth-sand italic">Selarasa</span>
-            </h1>
-            <p className="text-base md:text-xl text-earth-cream/80 max-w-2xl mx-auto leading-relaxed">
-              Lebih dari sekadar nama, Selarasa adalah praktik kolektif di mana pangan, manusia, dan tanah bertemu dalam satu jalinan relasi.
-            </p>
+    <div className="min-h-screen bg-[#FAF7F2]">
+      {/* Hero */}
+      <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 bg-gradient-to-b from-earth-dark via-earth-brown to-earth-dark text-earth-cream overflow-hidden">
+        {/* Decorative */}
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute top-20 left-10 w-40 h-40 bg-earth-sand/10 rounded-full blur-3xl" />
+          <div className="absolute bottom-10 right-10 w-60 h-60 bg-earth-green/10 rounded-full blur-3xl" />
+        </div>
+        
+        <div className="max-w-6xl mx-auto px-4 text-center relative z-10">
+          <div className="inline-flex items-center gap-2 bg-earth-sand/20 px-4 py-1.5 rounded-full text-sm text-earth-sand font-medium mb-6">
+            <Code className="w-4 h-4" />
+            <span>Behind the Scene</span>
+          </div>
+          <h1 className="text-3xl md:text-5xl font-serif font-bold mb-4">Tentang</h1>
+          <p className="text-earth-cream/70 max-w-2xl mx-auto text-sm md:text-base">
+            Cerita di balik pembuatan website ini — dari program magang hingga tim yang membangunnya.
+          </p>
+        </div>
+      </section>
+
+      {/* Profil Adibali */}
+      <section className="py-12 md:py-20 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-white rounded-3xl p-6 md:p-10 shadow-lg border border-stone-100">
+            <div className="flex items-start gap-4 mb-6">
+              <div className="w-14 h-14 bg-earth-green/10 rounded-2xl flex items-center justify-center flex-shrink-0">
+                <School className="w-7 h-7 text-earth-green" />
+              </div>
+              <div>
+                <h2 className="text-2xl md:text-3xl font-serif font-bold text-earth-dark">
+                  Profil Adibali
+                </h2>
+                <p className="text-earth-dark/50 text-sm mt-1">Program Magang SMKN 20 Jakarta</p>
+              </div>
+            </div>
+            
+            <div className="space-y-4 text-earth-dark/70 leading-relaxed text-sm md:text-base">
+              <p>
+                <strong className="text-earth-dark">Adibali</strong> adalah nama tim magang dari SMKN 20 Jakarta 
+                yang ditugaskan untuk membangun website Selarasa Kolektif. Program magang ini merupakan 
+                bagian dari kurikulum Praktik Kerja Lapangan (PKL) yang bertujuan memberikan pengalaman 
+                nyata kepada siswa dalam membangun proyek teknologi informasi.
+              </p>
+              <p>
+                Selama masa magang, tim Adibali bekerja langsung dengan komunitas Selarasa untuk memahami 
+                kebutuhan website, merancang desain yang sesuai dengan identitas komunitas, dan mengimplementasikan 
+                fitur-fitur yang dibutuhkan menggunakan teknologi modern seperti React dan Tailwind CSS.
+              </p>
+              <p>
+                Program ini tidak hanya mengasah kemampuan teknis, tetapi juga mengajarkan tentang 
+                kolaborasi, komunikasi dengan klien, dan pemahaman konteks sosial dari sebuah proyek teknologi.
+              </p>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Latar Belakang - Awal Mula Tumbuh dengan DomeGallery */}
-      <section className="py-16 md:py-24 bg-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-1/2 h-full bg-earth-sand/5 -skew-x-12 transform origin-top hidden md:block"></div>
-        <div className="w-full px-4 md:max-w-7xl md:mx-auto md:px-8 relative z-10">
-          <div className="about-grid">
-            {/* LEFT: Text Content */}
-            <div className="about-left">
-              <h2 className="text-2xl md:text-3xl font-serif text-earth-dark mb-4 md:mb-6">Awal Mula Tumbuh</h2>
-              <p className="text-earth-dark/80 text-sm md:text-base leading-relaxed mb-4 md:mb-6">
-                Selarasa bermula dari kesadaran tentang jarak yang semakin jauh antara masyarakat urban dengan piring makan mereka. Tumbuh di tengah kota, inisiatif ini dirancang sebagai eksperimen ruang hidup.
-              </p>
-              <p className="text-earth-dark/80 leading-relaxed">
-                Melalui kolaborasi lintas disiplin—dari petani, seniman, hingga ibu rumah tangga—kami mulai mengolah lahan yang tersisa, membagikan benih, dan menata ulang narasi tentang kemandirian pangan lokal.
-              </p>
-            </div>
+      {/* Tim Pembuat Web */}
+      <section className="py-12 md:py-20 px-4 bg-white">
+        <div className="max-w-4xl mx-auto text-center">
+          <div className="inline-flex items-center gap-2 text-earth-brown text-sm font-medium mb-4">
+            <Users className="w-4 h-4" />
+            <span>Tim Adibali</span>
+          </div>
+          <h2 className="text-2xl md:text-3xl font-serif font-bold text-earth-dark mb-4">
+            Tim Pembuat Website
+          </h2>
+          <p className="text-earth-dark/60 text-sm md:text-base max-w-xl mx-auto mb-10">
+            Tiga siswa SMKN 20 Jakarta yang bekerja sama membangun website ini dari nol.
+          </p>
 
-            {/* RIGHT: DomeGallery */}
-            <div className="about-right">
-              <h3 className="text-lg font-serif text-earth-dark/70 mb-4">Foto Kegiatan Komunitas</h3>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            {teamMembers.map((member, index) => (
+              <div
+                key={index}
+                className="group bg-[#FAF7F2] rounded-2xl p-6 hover:shadow-lg transition-all duration-300 border border-stone-100"
+              >
+                {/* Avatar placeholder */}
+                <div className="w-24 h-24 mx-auto mb-4 rounded-full bg-gradient-to-br from-earth-sand to-earth-brown flex items-center justify-center text-white text-2xl font-serif font-bold shadow-lg group-hover:scale-105 transition-transform">
+                  {member.name.charAt(0)}
+                </div>
+                <h3 className="font-serif font-bold text-earth-dark text-lg">{member.name}</h3>
+                <p className="text-earth-dark/50 text-sm mt-1">{member.role}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-              {/* STRICT WRAPPER (WAJIB KAYA REACT BITS) */}
-              <div className="dome-wrapper">
-                <div style={{ width: '100%', height: '100%' }}>
-                  <DomeGallery
-                    images={[
-                      "/images/kegiatan1.jpg",
-                      "/images/kegiatan2.jpg",
-                      "/images/kegiatan3.jpg",
-                      "/images/kegiatan4.jpg"
-                    ]}
-                    minRadius={1000}
-                    maxVerticalRotationDeg={9}
-                    dragDampening={4.4}
-                    grayscale={false}
-                  />
+      {/* Informasi SMKN 20 */}
+      <section className="py-12 md:py-20 px-4">
+        <div className="max-w-4xl mx-auto">
+          <div className="bg-gradient-to-br from-earth-dark to-earth-brown rounded-3xl p-6 md:p-10 text-earth-cream">
+            <h2 className="text-2xl md:text-3xl font-serif font-bold mb-6">
+              Informasi SMKN 20 Jakarta
+            </h2>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-earth-sand/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Phone className="w-5 h-5 text-earth-sand" />
+                  </div>
+                  <div>
+                    <p className="text-earth-cream/50 text-sm">Telepon</p>
+                    <p className="font-medium">(021) 7658890</p>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-earth-sand/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <MapPin className="w-5 h-5 text-earth-sand" />
+                  </div>
+                  <div>
+                    <p className="text-earth-cream/50 text-sm">Alamat</p>
+                    <p className="font-medium">Jl. Raya Bogor KM 26, Ciracas, Jakarta Timur 13750</p>
+                  </div>
+                </div>
+              </div>
+
+              <div className="space-y-4">
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-earth-sand/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Globe className="w-5 h-5 text-earth-sand" />
+                  </div>
+                  <div>
+                    <p className="text-earth-cream/50 text-sm">Website</p>
+                    <a 
+                      href="https://smkn20jkt.sch.id" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="font-medium text-earth-sand hover:text-white transition-colors inline-flex items-center gap-1"
+                    >
+                      smkn20jkt.sch.id
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  </div>
+                </div>
+
+                <div className="flex items-start gap-3">
+                  <div className="w-10 h-10 bg-earth-sand/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <School className="w-5 h-5 text-earth-sand" />
+                  </div>
+                  <div>
+                    <p className="text-earth-cream/50 text-sm">Jurusan Terkait</p>
+                    <p className="font-medium">Rekayasa Perangkat Lunak (RPL)</p>
+                  </div>
                 </div>
               </div>
             </div>
@@ -63,46 +179,57 @@ const About = () => {
         </div>
       </section>
 
-      {/* Nilai Utama */}
-      <section className="py-16 md:py-24 bg-earth-cream">
-        <div className="w-full px-4 md:max-w-7xl md:mx-auto md:px-8">
-          <div className="text-center mb-10 md:mb-16">
-            <h2 className="text-2xl md:text-3xl font-serif text-earth-dark mb-3 md:mb-4">Nilai yang Kami Hidupi</h2>
-            <p className="text-earth-dark/70 text-sm md:text-base max-w-2xl mx-auto">
-              Fondasi yang menjadi akar dari setiap inisiatif dan program Selarasa.
+      {/* Portfolio */}
+      <section className="py-12 md:py-20 px-4 bg-white">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-10">
+            <h2 className="text-2xl md:text-3xl font-serif font-bold text-earth-dark mb-3">
+              Portfolio
+            </h2>
+            <p className="text-earth-dark/60 text-sm md:text-base">
+              Website yang pernah dibuat oleh tim Adibali
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-            <div className="text-center p-6 border-b-2 border-earth-green/20 hover:border-earth-green transition-colors">
-              <div className="w-16 h-16 bg-earth-sand/30 rounded-full flex justify-center items-center mx-auto mb-6">
-                <Leaf className="w-8 h-8 text-earth-green" />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {portfolioItems.map((item, index) => (
+              <div
+                key={index}
+                className="group bg-[#FAF7F2] rounded-2xl p-6 border border-stone-100 hover:shadow-lg transition-all duration-300 hover:-translate-y-1"
+              >
+                {/* Preview placeholder */}
+                <div className="aspect-video bg-gradient-to-br from-earth-sand/30 to-earth-brown/20 rounded-xl mb-4 flex items-center justify-center overflow-hidden">
+                  <div className="text-center">
+                    <Code className="w-8 h-8 text-earth-brown/40 mx-auto mb-2" />
+                    <p className="text-xs text-earth-dark/30">Preview</p>
+                  </div>
+                </div>
+                
+                <h3 className="font-serif font-bold text-earth-dark text-lg mb-2">
+                  {item.title}
+                </h3>
+                <p className="text-earth-dark/60 text-sm mb-3 leading-relaxed">
+                  {item.description}
+                </p>
+                <div className="flex items-center justify-between">
+                  <span className="text-xs text-earth-brown bg-earth-sand/30 px-2 py-1 rounded-full">
+                    {item.tech}
+                  </span>
+                  {item.url !== '#' && (
+                    <a
+                      href={item.url}
+                      className="text-sm text-earth-green font-medium hover:underline inline-flex items-center gap-1"
+                    >
+                      Lihat
+                      <ExternalLink className="w-3 h-3" />
+                    </a>
+                  )}
+                </div>
               </div>
-              <h3 className="text-xl font-serif font-bold text-earth-dark mb-4">Keberlanjutan Organik</h3>
-              <p className="text-earth-dark/70 text-sm">Merawat tanah dan menolak ekstraksi yang merusak. Mengembalikan apa yang kita ambil ke dalam ekosistem.</p>
-            </div>
-
-            <div className="text-center p-6 border-b-2 border-earth-brown/20 hover:border-earth-brown transition-colors">
-              <div className="w-16 h-16 bg-earth-sand/30 rounded-full flex justify-center items-center mx-auto mb-6">
-                <HandHeart className="w-8 h-8 text-earth-brown" />
-              </div>
-              <h3 className="text-xl font-serif font-bold text-earth-dark mb-4">Solidaritas Kolektif</h3>
-              <p className="text-earth-dark/70 text-sm">Percaya bahwa praktik pangan tidak bisa berjalan sendiri. Kami merawat hubungan sama pentingnya dengan merawat tanaman.</p>
-            </div>
-
-            <div className="text-center p-6 border-b-2 border-earth-lightgreen/20 hover:border-earth-lightgreen transition-colors">
-              <div className="w-16 h-16 bg-earth-sand/30 rounded-full flex justify-center items-center mx-auto mb-6">
-                <Sprout className="w-8 h-8 text-earth-lightgreen" />
-              </div>
-              <h3 className="text-xl font-serif font-bold text-earth-dark mb-4">Edukasi Terbuka</h3>
-              <p className="text-earth-dark/70 text-sm">Menjadikan kebun sebagai ruang kelas tanpa dinding, memproduksi pengetahuan bersama yang terbuka untuk publik.</p>
-            </div>
+            ))}
           </div>
         </div>
       </section>
-
-      {/* Team Profile Section with Lanyard 3D */}
-      <TeamProfileLanyard />
     </div>
   );
 };

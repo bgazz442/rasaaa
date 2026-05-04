@@ -185,6 +185,9 @@
   .glass-nav {
     @apply bg-earth-cream/70 backdrop-blur-md border-b border-earth-brown/10 shadow-sm transition-all duration-300;
   }
+  .navbar-scrolled {
+    @apply bg-earth-cream/80 backdrop-blur-xl border-b border-earth-brown/10 shadow-md;
+  }
 }
 
 /* EntryGate Overlay - Fixed positioning to cover entire screen */

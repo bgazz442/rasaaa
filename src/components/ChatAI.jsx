@@ -2,10 +2,6 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Send, Bot } from 'lucide-react';
 
-// ============================================
-// COMPONENT: TypewriterText
-// Efek mengetik yang smooth dan stabil
-// ============================================
 const TypewriterText = ({ content, onComplete }) => {
   const [displayedContent, setDisplayedContent] = useState('');
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -22,7 +18,7 @@ const TypewriterText = ({ content, onComplete }) => {
       const timer = setTimeout(() => {
         setDisplayedContent(prev => prev + contentRef.current[currentIndex]);
         setCurrentIndex(prev => prev + 1);
-      }, 20); // Kecepatan mengetik: 20ms per karakter
+      }, 20);
       return () => clearTimeout(timer);
     } else {
       onComplete?.();
@@ -38,126 +34,191 @@ const TypewriterText = ({ content, onComplete }) => {
   );
 };
 
-// ============================================
-// FUNCTION: Smart AI Response (Local)
-// ============================================
-const getAIResponse = async (question) => {
-  // Smart response berdasarkan keywords (tanpa API call)
-  const q = question.toLowerCase();
-  
-  if (q.includes('selarasa') || q.includes('tentang') || q.includes('siapa')) {
-    return `Selarasa adalah platform kuliner yang menghubungkan petani lokal, produsen, dan konsumen. Kami berfokus pada:
-
-• Mendukung petani lokal Indonesia  
-• Menyediakan bahan makanan berkualitas
-• Membangun ekosistem kuliner berkelanjutan
-
-Anda dapat mengunjungi laman "Tentang" untuk informasi lebih lengkap.`;
+const getPageContext = () => {
+  try {
+    const pageName = window.location.pathname.replace('/', '') || 'home';
+    const pageTitles = document.querySelectorAll('h1, h2, h3');
+    const pageText = document.body.innerText?.substring(0, 3000) || '';
+    return { pageName, pageText: pageText.slice(0, 2000) };
+  } catch (e) {
+    return { pageName: 'unknown', pageText: '' };
   }
-  
-  if (q.includes('menu') || q.includes('produk') || q.includes('makanan')) {
-    return `Selarasa menawarkan berbagai produk:
-
-• Sayur & Buah Organik - Langsung dari petani
-• Bahan Pokok Lokal - Beras, kacang-kacangan, rempah  
-• Produk Olahan - Sambal, keripik, manisan
-• Minuman Tradisional - Jamu, kopi lokal, teh herbal
-
-Kunjungi laman "Katalog" untuk melihat produk lengkap.`;
-  }
-  
-  if (q.includes('program') || q.includes('kegiatan')) {
-    return `Selarasa memiliki beberapa program unggulan:
-
-• Program Petani Mitra - Kolaborasi dengan petani lokal
-• Workshop Kuliner - Edukasi memasak dan olahan pangan
-• Festival Pangan Lokal - Event promosi produk petani
-• Konsultasi Bisnis - Pendampingan UMKM kuliner
-
-Kunjungi laman "Program" untuk detail kegiatan.`;
-  }
-  
-  if (q.includes('proyek') || q.includes('dokumentasi') || q.includes('foto')) {
-    return `Proyek-proyek Selarasa mencakup:
-
-• Pembangunan pusat distribusi pangan lokal
-• Pengembangan aplikasi marketplace petani  
-• Penyediaan cold storage untuk petani
-• Program edukasi pertanian berkelanjutan
-
-Lihat dokumentasi lengkap di laman "Proyek".`;
-  }
-  
-  if (q.includes('gabung') || q.includes('partisipasi') || q.includes('daftar')) {
-    return `Anda bisa bergabung dengan Selarasa sebagai:
-
-• Petani Mitra - Jika Anda memiliki hasil pertanian
-• Konsumen - Membeli produk lokal berkualitas  
-• Relawan - Mengikuti program edukasi dan event
-• Investor - Mendukung ekosistem pangan lokal
-
-Klik tombol "Terlibat" atau kunjungi laman "Partisipasi".`;
-  }
-  
-  if (q.includes('forum') || q.includes('komunitas') || q.includes('diskusi')) {
-    return `Forum Selarasa adalah tempat berdiskusi:
-
-• Berbagi resep dan tips memasak
-• Tanya jawab seputar pertanian
-• Diskusi bisnis kuliner UMKM
-• Update info pasar dan tren pangan
-
-Kunjungi laman "Forum" untuk bergabung dalam komunitas kami.`;
-  }
-  
-  if (q.includes('artikel') || q.includes('blog') || q.includes('berita')) {
-    return `Artikel Selarasa mencakup:
-
-• Kisah sukses petani lokal
-• Tips pertanian organik
-• Resep tradisional Indonesia
-• Analisis tren pangan dan kuliner
-
-Kunjungi laman "Artikel" untuk membaca konten inspiratif kami.`;
-  }
-  
-  if (q.includes('kontak') || q.includes('alamat') || q.includes('lokasi')) {
-    return `Hubungi Selarasa melalui:
-
-• Email: halo@selarasa.id
-• Telepon: +62 812-XXXX-XXXX
-• Alamat: [Alamat Kantor Selarasa]
-• Media Sosial: @selarasa.id
-
-Kunjungi laman "Kontak" untuk informasi lengkap dan form pertanyaan.`;
-  }
-  
-  // Default response
-  return `Halo! Saya AI Selarasa. Saya bisa membantu informasi tentang:
-
-• Profil dan tentang Selarasa
-• Program dan kegiatan  
-• Proyek dan dokumentasi
-• Katalog produk
-• Cara bergabung/partisipasi
-• Forum komunitas
-• Artikel dan konten
-• Kontak dan lokasi
-
-Tanyakan apa saja, saya akan coba jawab sebaik mungkin!`;
 };
 
-// ============================================
-// COMPONENT: ChatAI
-// Chat AI dengan optimasi performa maksimal
-// ============================================
-const ChatAI = ({ isOpen, onClose, isMobile }) => {
-  // State utama
+const callGeminiDirect = async (question, pageContext = '') => {
+  try {
+    const API_KEY = process.env.REACT_APP_GEMINI_API_KEY || "AIzaSyCEVNDo_e9wuITobhZn61PLJtvdjukznsU";
+    
+    const systemPrompt = `You are an assistant for the Selarasa Jagakarsa Foodlab website.
+
+STRICT RULES - MUST FOLLOW:
+- Answer using ONLY the provided CONTEXT below
+- Do NOT generate answers from general knowledge if context is available
+- Do NOT add extra explanations outside the context
+- Do NOT guess or assume
+- If the answer is not found in the context, say exactly: "Informasi tersebut belum tersedia di halaman ini."
+- Do NOT mention AI, system, or your capabilities
+- Do NOT explain what you are
+- No meta explanation
+
+ANSWER STYLE:
+- Short, clear, and straight to the point
+- Use wording similar to the context
+- Natural, friendly, and community-oriented
+- Use "kita" dan "kamu" seperti anggota komunitas
+- No AI-related statements
+
+SAPAAN & INTERAKSI:
+- "hai" → "hai" atau "hai, ada yang bisa dibantu?"
+- "oy" → "oy" atau "oy, butuh info apa?"
+- "p" → "p apa?" atau "p, ada yang bisa dibantu?"
+- "hi" → "hi" atau "hi, selamat datang di Selarasa"
+- "hello" → "hello" atau "hello, mau tahu apa tentang Selarasa?"
+
+PRIORITY:
+1. Context (highest priority - MUST use this first)
+2. Only if context doesn't contain answer, use base knowledge about Selarasa
+
+BASE KNOWLEDGE (only if context insufficient):
+- Selarasa Jagakarsa Foodlab, Gudskul, Jl. Durian No.30A, Jagakarsa
+- 5 Member: Julian Riezki, Tahlia Motik, Bellina Erby, Risya Ayunindya, Anita Bonit
+- Kontak: selarasa.kolektif@gmail.com, WhatsApp +62 812 9281 6844
+- Kegiatan: Majelis Sayur Jagakarsa, Hutan Jakarta (since 2016), Food Lab`;
+
+    const finalPrompt = `${systemPrompt}
+
+CONTEXT FROM CURRENT PAGE:
+${pageContext || 'Tidak ada konteks halaman tersedia.'}
+
+USER QUESTION:
+${question}
+
+Jawab berdasarkan CONTEXT di atas. Jika tidak ada di context, katakan "Informasi tersebut belum tersedia di halaman ini."`;
+
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ text: finalPrompt }]
+          }],
+          generationConfig: {
+            temperature: 0.3,
+            maxOutputTokens: 1024,
+          }
+        })
+      }
+    );
+
+    if (response.ok) {
+      const data = await response.json();
+      const answer = data.candidates[0]?.content?.parts[0]?.text;
+      if (answer && answer.trim()) {
+        return answer;
+      }
+    }
+    
+    // Fallback: search in page context manually
+    const q = question.toLowerCase().trim();
+    const context = (pageContext || '').toLowerCase();
+    
+    // Helper to find relevant sentence in context
+    const findInContext = (keywords) => {
+      const sentences = pageContext.split(/[.!?\n]+/);
+      for (const keyword of keywords) {
+        if (context.includes(keyword)) {
+          const relevant = sentences.find(s => s.toLowerCase().includes(keyword));
+          if (relevant && relevant.trim().length > 10) {
+            return relevant.trim();
+          }
+        }
+      }
+      return null;
+    };
+    
+    // Respon sapaan (tidak perlu context)
+    if (q === 'hai' || q === 'halo' || q === 'hallo') {
+      return `Hai! Selamat datang di Selarasa. Ada yang bisa dibantu tentang komunitas kita?`;
+    }
+    
+    if (q === 'oy' || q === 'oi') {
+      return `Oy! Butuh info apa nih tentang Selarasa?`;
+    }
+    
+    if (q === 'p' || q === 'pe') {
+      return `P apa? Ada yang bisa dibantu?`;
+    }
+    
+    if (q === 'hi') {
+      return `Hi! Selamat datang di Selarasa. Mau tahu apa tentang kita?`;
+    }
+    
+    if (q === 'hello') {
+      return `Hello! Mau tahu apa tentang Selarasa?`;
+    }
+    
+    if (q === 'hey' || q === 'helo') {
+      return `Hey! Ada yang bisa dibantu?`;
+    }
+    
+    // Cari di context terlebih dahulu untuk pertanyaan spesifik
+    if (q.includes('selarasa') || q.includes('tentang')) {
+      const found = findInContext(['selarasa', 'komunitas', 'foodlab', 'jagakarsa']);
+      if (found) return found;
+      return `Selarasa itu komunitas kita di Jagakarsa yang fokus ke pangan lokal dan urban farming. Kita mulai tahun 2019 sebagai bagian dari Gudskul.`;
+    }
+    
+    if (q.includes('member') || q.includes('siapa') || q.includes('anggota')) {
+      const found = findInContext(['member', 'anggota', 'julian', 'tahlia', 'bellina', 'risya', 'anita']);
+      if (found) return found;
+      return `Kita punya 5 member inti: Julian Riezki, Tahlia Motik, Bellina Erby, Risya Ayunindya, dan Anita Bonit. Mereka aktif di berbagai kegiatan komunitas.`;
+    }
+    
+    if (q.includes('lokasi') || q.includes('alamat') || q.includes('dimana')) {
+      const found = findInContext(['lokasi', 'alamat', 'gudskul', 'jagakarsa', 'durian']);
+      if (found) return found;
+      return `Kita berbasis di Gudskul, Jl. Durian No.30A, Jagakarsa, Jakarta Selatan.`;
+    }
+    
+    if (q.includes('kontak') || q.includes('whatsapp') || q.includes('hubungi') || q.includes('telepon')) {
+      const found = findInContext(['kontak', 'whatsapp', 'email', 'telepon']);
+      if (found) return found;
+      return `Kamu bisa hubungi kita lewat WhatsApp di +62 812 9281 6844 atau email selarasa.kolektif@gmail.com.`;
+    }
+    
+    if (q.includes('kegiatan') || q.includes('program') || q.includes('kegiatan') || q.includes('aktivitas')) {
+      const found = findInContext(['kegiatan', 'program', 'majelis sayur', 'hutan jakarta', 'food lab']);
+      if (found) return found;
+      return `Kita punya Majelis Sayur Jagakarsa rutin setiap minggu, Hutan Jakarta (gerakan urban farming sejak 2016), dan Food Lab untuk eksperimen pangan lokal.`;
+    }
+    
+    if (q.includes('gabung') || q.includes('join') || q.includes('daftar')) {
+      const found = findInContext(['gabung', 'join', 'daftar', 'member']);
+      if (found) return found;
+      return `Kamu bisa mulai dengan datang ke Majelis Sayur Jagakarsa atau hubungi kita lewat WhatsApp di +62 812 9281 6844.`;
+    }
+    
+    // Jika ada context tapi tidak ketemu jawaban yang relevan
+    if (pageContext && pageContext.length > 50) {
+      return `Informasi tersebut belum tersedia di halaman ini.`;
+    }
+    
+    // Jika tidak ada context, gunakan base knowledge
+    return `Selarasa itu komunitas urban farming di Jagakarsa yang fokus ke pangan lokal. Ada yang bisa dibantu?`;
+    
+  } catch (err) {
+    return `Maaf, lagi ada kendala teknis. Kalau urgent, coba hubungi langsung lewat WhatsApp +62 812 9281 6844 ya.`;
+  }
+};
+
+const ChatAI = ({ isOpen, onClose, isMobile, pageContext = '' }) => {
   const [messages, setMessages] = useState([
     { 
       id: Date.now(), 
       role: 'ai', 
-      content: 'Halo! Saya asisten AI Selarasa. Tanyakan apa saja dan saya akan langsung membantu Anda.',
+      content: 'Hai! Selamat datang di Selarasa. Mau tahu apa tentang komunitas kita?',
       isTyping: false,
       isNew: true
     }
@@ -165,11 +226,25 @@ const ChatAI = ({ isOpen, onClose, isMobile }) => {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [typingMessageId, setTypingMessageId] = useState(null);
+  const [currentPageContext, setCurrentPageContext] = useState(pageContext);
   
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // Auto scroll ke bawah
+  // Update context when page changes or prop updates
+  useEffect(() => {
+    const updateContext = () => {
+      const { pageText } = getPageContext();
+      setCurrentPageContext(pageText || pageContext);
+    };
+    
+    updateContext();
+    
+    // Listen for route changes
+    const interval = setInterval(updateContext, 2000);
+    return () => clearInterval(interval);
+  }, [pageContext]);
+
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, []);
@@ -178,11 +253,6 @@ const ChatAI = ({ isOpen, onClose, isMobile }) => {
     scrollToBottom();
   }, [messages, scrollToBottom]);
 
-
-  // ============================================
-  // HANDLER: Finish Typing
-  // Menandai message selesai mengetik
-  // ============================================
   const handleTypingComplete = useCallback((msgId) => {
     setMessages(prev => prev.map(msg => 
       msg.id === msgId ? { ...msg, isNew: false } : msg
@@ -191,16 +261,12 @@ const ChatAI = ({ isOpen, onClose, isMobile }) => {
     setTypingMessageId(null);
   }, []);
 
-  // ============================================
-  // HANDLER: Send Message (Call Gemini API)
-  // ============================================
   const sendMessage = useCallback(async () => {
     if (!input.trim() || isTyping) return;
 
     const userContent = input.trim();
     const userId = Date.now();
     
-    // Tambah user message
     setMessages(prev => [...prev, { 
       id: userId, 
       role: 'user', 
@@ -213,10 +279,7 @@ const ChatAI = ({ isOpen, onClose, isMobile }) => {
     setIsTyping(true);
 
     try {
-      // Langsung pakai smart response (local)
-      console.log("[ChatAI] Menggunakan AI response...");
-      const answer = await getAIResponse(userContent);
-      console.log("[ChatAI] AI Response:", answer?.substring(0, 50));
+      const answer = await callGeminiDirect(userContent, currentPageContext);
 
       const aiId = Date.now() + 1;
       
@@ -230,27 +293,11 @@ const ChatAI = ({ isOpen, onClose, isMobile }) => {
       }]);
 
     } catch (err) {
-      console.error("[ChatAI] Error:", err);
-      
-      // Cek apakah ada response dari API dengan error message
-      let errorContent = "Maaf, terjadi kesalahan saat menghubungi AI. Silakan coba lagi nanti.";
-      
-      if (err.message) {
-        if (err.message.includes("API Key") || err.message.includes("GEMINI")) {
-          errorContent = "⚠️ API Key belum diatur atau invalid. Pastikan:\n1. File .env.local sudah dibuat\n2. GEMINI_API_KEY sudah diisi\n3. Server backend sudah jalan (npm run server)";
-        } else if (err.message.includes("quota") || err.message.includes("limit")) {
-          errorContent = "⚠️ Kuota Gemini habis. Coba lagi nanti atau gunakan API key lain.";
-        } else if (err.message.includes("network") || err.message.includes("fetch") || err.message.includes("connect")) {
-          errorContent = "⚠️ Tidak bisa terhubung ke server AI (port 5000). Pastikan server backend sudah jalan dengan: npm run server";
-        }
-      }
-      
-      // Fallback message jika API error
       const errorId = Date.now() + 1;
       setMessages(prev => [...prev, { 
         id: errorId, 
         role: 'ai', 
-        content: errorContent,
+        content: `Maaf, lagi ada kendala. Kalau urgent, hubungi WhatsApp +62 812 9281 6844 ya.`,
         isTyping: false,
         isNew: false
       }]);
@@ -258,9 +305,6 @@ const ChatAI = ({ isOpen, onClose, isMobile }) => {
     }
   }, [input, isTyping]);
 
-  // ============================================
-  // HANDLER: Keyboard Input
-  // ============================================
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -268,10 +312,6 @@ const ChatAI = ({ isOpen, onClose, isMobile }) => {
     }
   }, [sendMessage]);
 
-  // ============================================
-  // MEMOIZED: Chat Messages (Performa Optimal)
-  // Hanya re-render jika messages berubah
-  // ============================================
   const chatMessages = useMemo(() => {
     return messages.map((msg) => {
       const isUser = msg.role === 'user';
@@ -308,9 +348,6 @@ const ChatAI = ({ isOpen, onClose, isMobile }) => {
     });
   }, [messages, typingMessageId, handleTypingComplete]);
 
-  // ============================================
-  // MEMOIZED: Typing Indicator
-  // ============================================
   const typingIndicator = useMemo(() => {
     if (!isTyping || typingMessageId) return null;
     
@@ -327,25 +364,21 @@ const ChatAI = ({ isOpen, onClose, isMobile }) => {
             <span className="w-2 h-2 bg-[#8B7355] rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
             <span className="w-2 h-2 bg-[#8B7355] rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
           </div>
-          <span className="text-xs text-gray-400">AI sedang mengetik...</span>
+          <span className="text-xs text-gray-400">Mengetik...</span>
         </div>
       </motion.div>
     );
   }, [isTyping, typingMessageId]);
 
-  // ============================================
-  // MEMOIZED: Main Chat Content
-  // ============================================
   const chatContent = useMemo(() => (
     <div className="flex flex-col h-full bg-[#1A1A1A]/95 backdrop-blur-xl border border-white/10 shadow-2xl overflow-hidden rounded-2xl text-white">
-      {/* Header */}
       <div className="px-4 py-3 border-b border-white/10 flex justify-between items-center bg-black/20 shrink-0">
         <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#8B7355] to-[#6B5344] flex items-center justify-center">
             <Bot className="w-5 h-5 text-white" />
           </div>
           <div>
-            <h3 className="font-semibold text-[14px] font-sans">AI Selarasa</h3>
+            <h3 className="font-semibold text-[14px] font-sans">Selarasa</h3>
             <span className="text-[11px] text-green-400 flex items-center gap-1">
               <span className="w-1.5 h-1.5 bg-green-400 rounded-full" />
               Online
@@ -362,14 +395,12 @@ const ChatAI = ({ isOpen, onClose, isMobile }) => {
         )}
       </div>
 
-      {/* Messages Area */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4 custom-scrollbar min-h-0">
         {chatMessages}
         {typingIndicator}
         <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
       <div className="p-3 bg-black/20 border-t border-white/10 shrink-0">
         <form
           onSubmit={(e) => { e.preventDefault(); sendMessage(); }}
@@ -397,9 +428,6 @@ const ChatAI = ({ isOpen, onClose, isMobile }) => {
             <Send className="w-4 h-4" />
           </button>
         </form>
-        <p className="text-[10px] text-gray-500 mt-2 text-center">
-          AI dapat membuat kesalahan. Verifikasi informasi penting.
-        </p>
       </div>
       
       <style dangerouslySetInnerHTML={{__html: `
@@ -427,9 +455,6 @@ const ChatAI = ({ isOpen, onClose, isMobile }) => {
     </div>
   ), [chatMessages, typingIndicator, input, isTyping, isMobile, onClose, sendMessage, handleKeyDown]);
 
-  // ============================================
-  // RENDER: Mobile vs Desktop
-  // ============================================
   if (isMobile) {
     return chatContent;
   }

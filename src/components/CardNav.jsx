@@ -11,14 +11,13 @@ gsap.defaults({
 });
 
 const navLinks = [
-  { name: 'Tentang', path: '/about' },
+  { name: 'Profil', path: '/profil' },
+  { name: 'Member', path: '/member' },
+  { name: 'Pameran', path: '/pameran' },
   { name: 'Program', path: '/program' },
-  { name: 'Proyek', path: '/proyek' },
-  { name: 'Fokus', path: '/fokus' },
-  { name: 'Proses', path: '/proses' },
-  { name: 'Artikel', path: '/artikel' },
-  { name: 'Katalog', path: '/katalog' },
-  { name: 'Forum', path: '/forum' },
+  { name: 'Contact', path: '/contact' },
+  { name: 'Tentang', path: '/about' },
+  { name: 'Thumbnail', path: '/thumbnail' },
 ];
 
 const CardNav = () => {
@@ -189,8 +188,8 @@ const CardNav = () => {
                 className="object-contain"
                 style={{ height: '20px', width: 'auto', maxWidth: '40px' }}
               />
-              <span className="font-serif font-bold text-earth-dark tracking-tight" style={{ fontSize: '14px' }}>
-                Selarasa
+              <span className="font-serif font-bold text-earth-dark tracking-tight truncate ml-1" style={{ fontSize: '13px', maxWidth: '160px' }}>
+                Selarasa Jagakarsa Foodlab
               </span>
             </Link>
 
@@ -263,7 +262,7 @@ const CardNav = () => {
               {/* CTA Button */}
               <div ref={ctaRef} className="mt-4 pt-4 border-t border-earth-brown/10">
                 <Link
-                  to="/partisipasi"
+                  to="/contact"
                   onClick={handleLinkClick}
                   className="block w-full text-center px-4 py-3.5 rounded-xl text-base font-medium transition-transform duration-200 active:scale-95"
                   style={{
@@ -272,7 +271,7 @@ const CardNav = () => {
                     boxShadow: '0 4px 15px rgba(139, 115, 85, 0.3)'
                   }}
                 >
-                  Terlibat
+                  Hubungi Kami
                 </Link>
               </div>
             </div>

@@ -3,20 +3,21 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Bot } from 'lucide-react';
 import logo from '../assets/logo.png';
-import FuzzyText from './FuzzyText';
+
 import ChatAI from './ChatAI';
 
 // Navigation items
 const navLinks = [
-  { name: 'Tentang', path: '/about' },
+  { name: 'Profil', path: '/profil' },
+  { name: 'Member', path: '/member' },
+  { name: 'Pameran', path: '/pameran' },
   { name: 'Program', path: '/program' },
-  { name: 'Proyek', path: '/proyek' },
-  { name: 'Fokus', path: '/fokus' },
-  { name: 'Proses', path: '/proses' },
-  { name: 'Artikel', path: '/artikel' },
-  { name: 'Katalog', path: '/katalog' },
-  { name: 'Forum', path: '/forum' },
+  { name: 'Contact', path: '/contact' },
+  { name: 'Tentang', path: '/about' },
+  { name: 'Forum', path: '/forum' }, 
 ];
+
+console.log('Forum link added:', navLinks.find(link => link.name === 'Forum'));
 
 // Ultra Smooth Spring - More precise transitions
 const iOSSpring = {
@@ -167,11 +168,11 @@ const LiquidGlassNavIOS = () => {
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'py-3' : 'py-4'
           }`}
         style={{
-          background: 'rgba(250, 247, 242, 0.85)',
-          backdropFilter: 'blur(20px) saturate(180%)',
-          WebkitBackdropFilter: 'blur(20px) saturate(180%)',
-          borderBottom: '1px solid rgba(255, 255, 255, 0.3)',
-          boxShadow: '0 4px 30px rgba(0, 0, 0, 0.1)',
+          background: 'rgba(250, 247, 242, 0.9)',
+          backdropFilter: 'blur(30px) saturate(200%)',
+          WebkitBackdropFilter: 'blur(30px) saturate(200%)',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.4)',
+          boxShadow: '0 8px 40px rgba(0, 0, 0, 0.12)',
         }}
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -184,22 +185,9 @@ const LiquidGlassNavIOS = () => {
                 className="h-8 md:h-10 object-contain transition-transform group-hover:scale-105"
               />
               <div className="flex items-center -ml-2">
-                <FuzzyText
-                  fontSize={24}
-                  fontWeight={700}
-                  fontFamily="'Cactus Classical Serif', Georgia, serif"
-                  color="#3D3B36"
-                  baseIntensity={0.08}
-                  hoverIntensity={0.25}
-                  fuzzRange={8}
-                  fps={60}
-                  direction="horizontal"
-                  transitionDuration={8}
-                  enableHover={true}
-                  className="cursor-pointer"
-                >
-                  Selarasa
-                </FuzzyText>
+                <span className="font-serif text-[18px] font-bold text-[#3D3B36] cursor-pointer whitespace-nowrap ml-2 hover:opacity-80 hover:blur-[0.5px] transition-all duration-300">
+                  Selarasa Jagakarsa Foodlab
+                </span>
               </div>
             </Link>{/* ==================== DESKTOP NAV ==================== */}
             <div className="hidden md:flex items-center gap-4">
@@ -207,13 +195,14 @@ const LiquidGlassNavIOS = () => {
               <div className="relative flex items-center px-1 py-1 rounded-full bg-transparent">
                 {navLinks.map((link, index) => {
                   const isActive = showIndicatorForIndex === index;
+                  console.log('Rendering link:', link.name, 'index:', index);
                   return (
                     <Link
                       key={link.name}
                       to={link.path}
                       onMouseEnter={() => handleMouseEnter(index)}
                       onMouseLeave={handleMouseLeave}
-                      className="relative px-4 py-2 rounded-full whitespace-nowrap"
+                      className={`relative px-4 py-2 rounded-full whitespace-nowrap ${link.name === 'Forum' ? 'bg-green-100 text-green-700' : ''}`}
                     >
                       {isActive && <LiquidIndicator isMoving={isMoving} direction={direction} isRouteChanging={isRouteChanging} />}
                       <motion.span
@@ -249,7 +238,7 @@ const LiquidGlassNavIOS = () => {
               </button>
 
               <Link
-                to="/partisipasi"
+                to="/contact"
                 className="px-5 py-2.5 rounded-full text-sm font-medium transition-all duration-300 hover:-translate-y-0.5"
                 style={{
                   background: 'linear-gradient(135deg, #8B7355 0%, #6B5344 100%)',
@@ -257,7 +246,7 @@ const LiquidGlassNavIOS = () => {
                   boxShadow: '0 4px 15px rgba(139, 115, 85, 0.25)',
                 }}
               >
-                Terlibat
+                Hubungi Kami
               </Link>
             </div>
 
@@ -312,24 +301,25 @@ const LiquidGlassNavIOS = () => {
           <>
             {/* Backdrop */}
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="md:hidden fixed inset-0 z-40 bg-black/35"
-              style={{ backdropFilter: 'blur(8px)' }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              className="md:hidden fixed inset-0 z-40 bg-black/40"
+              style={{ backdropFilter: 'blur(12px) saturate(150%)' }}
               onClick={() => setIsMobileMenuOpen(false)}
             />
 
             {/* Mobile Panel */}
             <motion.div
-              initial={{ x: '100%', opacity: 0 }}
-              animate={{ x: 0, opacity: 1 }}
-              exit={{ x: '100%', opacity: 0 }}
+              initial={{ x: '100%', opacity: 0, scale: 0.95 }}
+              animate={{ x: 0, opacity: 1, scale: 1 }}
+              exit={{ x: '100%', opacity: 0, scale: 0.95 }}
               transition={iOSSpring}
               className="md:hidden fixed top-0 right-0 h-full z-50 w-[300px] max-w-[85vw]"
               style={{
                 background: 'rgba(250, 247, 242, 0.95)',
                 backdropFilter: 'blur(40px) saturate(180%)',
+                WebkitBackdropFilter: 'blur(40px) saturate(180%)',
                 borderLeft: '1px solid rgba(255, 255, 255, 0.6)',
                 boxShadow: '-20px 0 60px rgba(0, 0, 0, 0.15)',
               }}
@@ -410,11 +400,11 @@ const LiquidGlassNavIOS = () => {
                   className="pt-5 mt-4 border-t border-earth-brown/10"
                 >
                   <Link
-                    to="/partisipasi"
+                    to="/contact"
                     onClick={() => setIsMobileMenuOpen(false)}
                     className="block w-full text-center px-4 py-4 rounded-xl text-base font-medium bg-gradient-to-br from-[#8B7355] to-[#6B5344] text-[#FAF7F2]"
                   >
-                    Ajakan Terlibat
+                    Hubungi Kami
                   </Link>
                 </motion.div>
               </div>

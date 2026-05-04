@@ -357,10 +357,10 @@ const Proses = () => {
                   <ArrowRight className="w-4 h-4" />
                 </Link>
                 <Link 
-                  to="/partisipasi"
+                  to="/contact"
                   className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white border border-white/30 px-6 py-3 rounded-xl font-semibold hover:bg-white/30 transition-colors"
                 >
-                  <span>Mulai Tanam</span>
+                  <span>Hubungi Kami</span>
                   <Sprout className="w-4 h-4" />
                 </Link>
               </div>

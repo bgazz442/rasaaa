@@ -1,5 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { Sprout, Send, Sparkles, Leaf } from 'lucide-react';
+import React, { useState, useEffect, useMemo } from 'react';
+import { Sprout, Send, Sparkles, Leaf, TreePine } from 'lucide-react';
+
+const questions = [
+  {
+    id: 'kebun-jagakarsa',
+    text: 'Menurut kamu, berapa jumlah kebun yang ada di Kecamatan Jagakarsa?',
+    subtitle: 'Tebak jumlahnya dan ceritakan pendapatmu',
+    icon: <TreePine className="w-5 h-5 md:w-6 md:h-6 text-earth-sand" />,
+  },
+  {
+    id: 'masa-depan',
+    text: 'Menurutmu, seperti apa masa depan Selarasa?',
+    subtitle: 'Bagikan visi dan harapan Anda',
+    icon: <Sprout className="w-5 h-5 md:w-6 md:h-6 text-earth-sand" />,
+  },
+  {
+    id: 'urban-farming',
+    text: 'Salah satu manfaat urban farming bagi masyarakat kota adalah',
+    subtitle: 'Bagikan pendapat Anda tentang pertanian kota',
+    icon: <Leaf className="w-5 h-5 md:w-6 md:h-6 text-earth-sand" />,
+  },
+];
 
 const EntryGate = ({ onComplete }) => {
   const [answer, setAnswer] = useState('');
@@ -8,20 +29,21 @@ const EntryGate = ({ onComplete }) => {
   const [error, setError] = useState('');
   const [charCount, setCharCount] = useState(0);
 
-  const MIN_CHARS = 10;
+  // Random question selection (stable per mount)
+  const selectedQuestion = useMemo(() => {
+    return questions[Math.floor(Math.random() * questions.length)];
+  }, []);
+
+  const MIN_CHARS = 5;
   const MAX_CHARS = 500;
 
-  // Lock body scroll when EntryGate is open
+  // Lock body scroll
   useEffect(() => {
     const originalBodyOverflow = document.body.style.overflow;
     const originalHtmlOverflow = document.documentElement.style.overflow;
-    
-    // Lock scroll
     document.body.style.overflow = 'hidden';
     document.documentElement.style.overflow = 'hidden';
-    
     return () => {
-      // Restore
       document.body.style.overflow = originalBodyOverflow;
       document.documentElement.style.overflow = originalHtmlOverflow;
     };
@@ -53,7 +75,7 @@ const EntryGate = ({ onComplete }) => {
     }
 
     if (answer.trim().length < MIN_CHARS) {
-      setError(`Jawaban minimal ${MIN_CHARS} karakter. (${answer.trim().length}/${MIN_CHARS})`);
+      setError(`Jawaban minimal ${MIN_CHARS} karakter.`);
       return;
     }
 
@@ -61,10 +83,11 @@ const EntryGate = ({ onComplete }) => {
     setError('');
 
     try {
-      await new Promise((resolve) => setTimeout(resolve, 1500));
+      await new Promise((resolve) => setTimeout(resolve, 1200));
 
       const answerData = {
         id: Date.now().toString(),
+        questionId: selectedQuestion.id,
         content: answer.trim(),
         timestamp: new Date().toISOString(),
         deviceId: localStorage.getItem('gudskul_device_id') || generateDeviceId(),
@@ -79,7 +102,7 @@ const EntryGate = ({ onComplete }) => {
 
       setTimeout(() => {
         onComplete();
-      }, 2000);
+      }, 1800);
     } catch (err) {
       setError('Terjadi kesalahan. Silakan coba lagi.');
       setIsSubmitting(false);
@@ -92,97 +115,23 @@ const EntryGate = ({ onComplete }) => {
     return id;
   };
 
-  // Overlay styles - using inline styles for guaranteed positioning
-  const overlayStyle = {
-    position: 'fixed',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    width: '100%',
-    height: '100%',
-    minHeight: '100dvh',
-    zIndex: 9999,
-    overflow: 'auto',
-    overscrollBehavior: 'none',
-    touchAction: 'pan-y',
-    WebkitOverflowScrolling: 'touch',
-  };
-
-  const contentStyle = {
-    zIndex: 10,
-    width: '100%',
-    minHeight: '100vh',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: '16px',
-    boxSizing: 'border-box',
-    overflow: 'visible',
-    textAlign: 'center',
-  };
-
-  const boxStyle = {
-    width: '100%',
-    maxWidth: '600px',
-    margin: '0 auto',
-    flexShrink: 0,
-    textAlign: 'center',
-  };
-
   return (
-    <>
-      {/* Mobile-only CSS for perfect centering */}
-      <style>{`
-        @media (max-width: 768px) {
-          .entrygate-content-mobile {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            height: 100dvh !important;
-            min-height: 100vh !important;
-            min-height: 100dvh !important;
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            padding: 0 !important;
-            box-sizing: border-box !important;
-            overflow: hidden !important;
-            -webkit-overflow-scrolling: touch !important;
-          }
-          .entrygate-box-mobile {
-            width: 90% !important;
-            max-width: 400px !important;
-            margin: 0 auto !important;
-            flex-shrink: 0 !important;
-            text-align: center !important;
-            box-sizing: border-box !important;
-          }
-          .entrygate-box-mobile > * {
-            margin-left: auto !important;
-            margin-right: auto !important;
-          }
-        }
-      `}</style>
-    <div style={overlayStyle} className="bg-gradient-to-br from-earth-dark via-earth-brown to-earth-dark">
+    <div
+      className="fixed inset-0 z-[9999] overflow-auto bg-gradient-to-br from-earth-dark via-earth-brown to-earth-dark"
+      style={{ overscrollBehavior: 'none' }}
+    >
       {/* Animated Background */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-10 left-10 w-64 h-64 bg-earth-green/10 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute bottom-20 right-20 w-80 h-80 bg-earth-sand/10 rounded-full blur-3xl animate-float-delayed"></div>
-        <div className="absolute top-1/2 left-1/3 w-48 h-48 bg-leaf-500/10 rounded-full blur-3xl animate-float"></div>
-        <div className="absolute inset-0 opacity-5 pattern-dots"></div>
+        <div className="absolute top-10 left-10 w-64 h-64 bg-earth-green/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '4s' }} />
+        <div className="absolute bottom-20 right-20 w-80 h-80 bg-earth-sand/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '6s', animationDelay: '1s' }} />
+        <div className="absolute top-1/2 left-1/3 w-48 h-48 bg-earth-lightgreen/10 rounded-full blur-3xl animate-pulse" style={{ animationDuration: '5s', animationDelay: '2s' }} />
       </div>
 
       {/* Content */}
-      <div style={contentStyle} className="entrygate-content-mobile">
-        <div style={boxStyle} className="entrygate-box-mobile">
+      <div className="relative z-10 w-full min-h-screen flex flex-col justify-center items-center px-4 py-8">
+        <div className="w-full max-w-[500px] mx-auto">
           {/* Logo */}
-          <div className="text-center mb-4 md:mb-6">
+          <div className="text-center mb-6">
             <div className="inline-flex items-center justify-center">
               <div className="w-14 h-14 md:w-16 md:h-16 bg-gradient-to-br from-earth-sand to-earth-cream rounded-full flex items-center justify-center shadow-lg">
                 <Leaf className="w-7 h-7 md:w-8 md:h-8 text-earth-dark" />
@@ -191,22 +140,20 @@ const EntryGate = ({ onComplete }) => {
           </div>
 
           {/* Card */}
-          <div className="bg-white/10 backdrop-blur-md rounded-2xl md:rounded-3xl p-4 md:p-8 border border-white/20 shadow-2xl w-full">
+          <div className="bg-white/10 backdrop-blur-md rounded-2xl md:rounded-3xl p-5 md:p-8 border border-white/20 shadow-2xl">
             {!showSuccess ? (
               <>
                 {/* Question */}
-                <div className="text-center mb-4 md:mb-6">
-                  <div className="inline-flex items-center gap-2 mb-2 md:mb-3">
-                    <Sprout className="w-5 h-5 md:w-6 md:h-6 text-earth-sand" />
-                    <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-earth-sand/60" />
+                <div className="text-center mb-5 md:mb-6">
+                  <div className="inline-flex items-center gap-2 mb-3">
+                    {selectedQuestion.icon}
+                    <Sparkles className="w-4 h-4 text-earth-sand/60" />
                   </div>
-                  <h2 className="text-base sm:text-lg md:text-2xl font-serif font-semibold text-white leading-relaxed">
-                    "Menurutmu, seperti apa
-                    <br className="hidden sm:block" />
-                    <span className="text-earth-sand">masa depan Selarasa?</span>"
+                  <h2 className="text-base sm:text-lg md:text-xl font-serif font-semibold text-white leading-relaxed">
+                    "{selectedQuestion.text}"
                   </h2>
-                  <p className="mt-2 md:mt-3 text-earth-cream/60 text-xs md:text-sm">
-                    Bagikan visi dan harapan Anda
+                  <p className="mt-2 text-earth-cream/50 text-xs md:text-sm">
+                    {selectedQuestion.subtitle}
                   </p>
                 </div>
 
@@ -216,10 +163,11 @@ const EntryGate = ({ onComplete }) => {
                     <textarea
                       value={answer}
                       onChange={handleChange}
-                      placeholder="Tulis jawabanmu di sini... (min 10 karakter)"
+                      placeholder="Tulis jawabanmu di sini..."
                       rows={3}
-                      className="w-full px-3 md:px-4 py-2 md:py-3 bg-white/5 border border-white/20 rounded-xl md:rounded-2xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-earth-sand/50 focus:border-transparent transition-all resize-none text-sm leading-relaxed"
+                      className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-xl text-white placeholder-white/40 focus:outline-none focus:ring-2 focus:ring-earth-sand/50 focus:border-transparent transition-all resize-none text-sm leading-relaxed"
                       disabled={isSubmitting}
+                      autoFocus
                     />
                     <div className="absolute bottom-2 right-3 text-xs text-white/40">
                       <span className={charCount < MIN_CHARS ? 'text-red-400' : 'text-green-400'}>
@@ -238,17 +186,17 @@ const EntryGate = ({ onComplete }) => {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full py-3 md:py-4 px-6 bg-gradient-to-r from-earth-sand to-earth-cream text-earth-dark font-semibold rounded-xl md:rounded-2xl hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
+                    className="w-full py-3 px-6 bg-gradient-to-r from-earth-sand to-earth-cream text-earth-dark font-semibold rounded-xl hover:shadow-xl transition-all duration-300 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed group"
                   >
                     {isSubmitting ? (
                       <>
-                        <div className="w-4 h-4 md:w-5 md:h-5 border-2 border-earth-dark/30 border-t-earth-dark rounded-full animate-spin"></div>
+                        <div className="w-4 h-4 border-2 border-earth-dark/30 border-t-earth-dark rounded-full animate-spin" />
                         <span className="text-sm">Menyimpan...</span>
                       </>
                     ) : (
                       <>
-                        <span className="text-sm md:text-base">Kirim & Masuk</span>
-                        <Send className="w-4 h-4 md:w-5 md:h-5 group-hover:translate-x-1 transition-transform" />
+                        <span className="text-sm">Kirim & Masuk</span>
+                        <Send className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                       </>
                     )}
                   </button>
@@ -256,22 +204,22 @@ const EntryGate = ({ onComplete }) => {
 
                 <div className="mt-4 text-center">
                   <p className="text-xs text-earth-cream/40">
-                    Jawaban Anda akan menjadi bagian dari koleksi visi Selarasa
+                    Jawaban Anda akan menjadi bagian dari koleksi Selarasa
                   </p>
                 </div>
               </>
             ) : (
-              <div className="text-center py-6 md:py-8 animate-fade-in">
-                <div className="w-16 h-16 md:w-20 md:h-20 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4 md:mb-6">
-                  <Sparkles className="w-8 h-8 md:w-10 md:h-10 text-green-400" />
+              <div className="text-center py-8 animate-fade-in">
+                <div className="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                  <Sparkles className="w-8 h-8 text-green-400" />
                 </div>
-                <h3 className="text-xl md:text-2xl font-serif font-semibold text-white mb-2 md:mb-4">
+                <h3 className="text-xl font-serif font-semibold text-white mb-2">
                   Terima Kasih!
                 </h3>
                 <p className="text-earth-cream/70 text-sm mb-2">
-                  Visi Anda telah tersimpan.
+                  Jawaban Anda telah tersimpan.
                 </p>
-                <p className="text-earth-sand text-xs md:text-sm">
+                <p className="text-earth-sand text-xs">
                   Mengarahkan ke website...
                 </p>
               </div>
@@ -286,26 +234,7 @@ const EntryGate = ({ onComplete }) => {
           </div>
         </div>
       </div>
-
-      {/* Reset Button */}
-      <button
-        onClick={() => {
-          if (window.confirm('Reset Entry Gate?')) {
-            localStorage.removeItem('gudskul_entry_answer');
-            localStorage.removeItem('gudskul_answers');
-            localStorage.removeItem('gudskul_liked_posts');
-            localStorage.removeItem('gudskul_display_numbers');
-            window.location.reload();
-          }
-        }}
-        style={{ position: 'absolute', bottom: '12px', right: '12px', zIndex: 20 }}
-        className="text-xs text-white/20 hover:text-white/50 transition-colors"
-        title="Reset (Testing)"
-      >
-        Reset
-      </button>
     </div>
-    </>
   );
 };
 
