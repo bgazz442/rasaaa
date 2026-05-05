@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Users, Briefcase } from 'lucide-react';
+import { X, Users } from 'lucide-react';
 import DarkVeil from '../components/DarkVeil';
 import memberJulian from '../assets/images/member-julian.jpg';
 import memberTahlia from '../assets/images/member-tahlia.jpg';

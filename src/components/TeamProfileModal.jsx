@@ -1,13 +1,7 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { X } from 'lucide-react';
 
 const TeamProfileModal = ({ profile, isOpen, onClose }) => {
-  useEffect(() => {
-    if (isOpen && profile) {
-      console.log("RENDER POPUP MEMBER:", profile.name);
-    }
-  }, [isOpen, profile]);
-
   if (!isOpen || !profile) return null;
 
   return (
