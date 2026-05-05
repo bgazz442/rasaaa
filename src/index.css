@@ -300,3 +300,29 @@
     border-radius: 24px !important;
   }
 }
+
+/* ========== POPUP MODAL FORCE FIX ========== */
+/* Force override untuk popup content */
+.popup-content * {
+  box-sizing: border-box !important;
+}
+
+.popup-content img {
+  max-width: 100% !important;
+  display: block !important;
+  position: relative !important;
+}
+
+/* Mobile popup layout force */
+@media (max-width: 768px) {
+  .popup-content > div > div {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+  
+  .popup-content img {
+    width: 100% !important;
+    height: auto !important;
+    object-fit: cover !important;
+  }
+}

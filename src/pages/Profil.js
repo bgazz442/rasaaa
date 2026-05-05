@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Leaf, Building2, MapPin, Sprout, ExternalLink, ChevronDown, HandHeart } from 'lucide-react';
-import { Link } from 'react-router-dom';
 import TeamProfileModal from '../components/TeamProfileModal';
 import awalMulaTumbuh from '../assets/images/awal-mula-tumbuh.jpg';
 import profilSelarasa from '../assets/images/profil-selarasa.jpg';
@@ -14,74 +13,7 @@ const profilLinks = [
   { name: 'Profil Majelis Sayur', hash: '#majelis-sayur', icon: <Sprout className="w-4 h-4" />, isExternal: true, externalUrl: 'https://majelissayur.id' },
 ];
 
-const teamProfiles = [
-  {
-    id: 'julian-riezki',
-    name: 'Julian Riezki',
-    aka: 'Juli Berskema',
-    photo: '/profile-julian.jpg',
-    bio: [
-      'Julian Riezki aka Juli Berskema adalah seorang seniman yang berfokus diri di bidang musik yang telah memulai berkarya sejak tahun 2007. Setelah merantau di beberapa kota di Indonesia Timur, Juli kembali tinggal di kota kelahirannya Jakarta pada tahun 2016. Ia melihat banyak perubahan terjadi di Jakarta seperti polusi yang parah, kualitas tanah yang rusak karena pencemaran lingkungan dan juga banyak area terbuka hijau yang telah hilang. Dari keresahan ini ia membuat gerakan bernama "Hutan Jakarta" dengan tujuan agar masyarakat bisa mengakses dan menjadikan ruang terbuka hijau seperti hutan kota untuk dimanfaatkan seperti melakukan praktik pertanian sejak 2016.',
-      'Selama menjalankan gerakan "Hutan Jakarta" tersebut, Julian melakukan penelitian akan tumbuhan-tumbuhan yang memiliki kandungan antioksidan yang tinggi untuk menyembuhkan Ibu nya yang mengidap penyakit asma. Dari penelitian ini, ia akhirnya terkoneksi dengan beberapa petani urban, aktivis lingkungan hingga para seniman yang memiliki keresahan dan minat yang sama akan konteks pangan, sosial, lingkungan baik di dalam maupun diluar Jakarta.',
-      'Pada tahun 2019, bersama Bellina Erby, Risya Ayunindya, Tahlia Motik dan Anita Bonit membuat kolektif seni bernama Selarasa Jagakarsa Foodlab dan menjadi bagian dari ekosistem seni rupa bernama Gudskul yang aktif hingga saat ini.',
-      'Semangat untuk saling terhubung, berbagi pengetahuan dan pengalaman sesama petani memantiknya untuk membuat pertemuan rutin bersama para petani di Jagakarsa, Jakarta Selatan sejak tahun 2020 hingga saat ini yang diberi nama "Majelis Sayur Jagakarsa".'
-    ]
-  },
-  {
-    id: 'tahlia-motik',
-    name: 'Tahlia Motik',
-    photo: '/profile-tahlia.jpg',
-    bio: [
-      'Tahlia Motik adalah seorang filmmaker dengan ketertarikan pada isu pangan dan ketahanan pangan berbasis komunitas. Ia terlibat dalam Selarasa FoodLab, sebuah inisiatif yang berfokus pada eksplorasi pangan lokal, riset, serta pengembangan praktik konsumsi yang lebih sadar dan berbasis komunitas.',
-      'Pada tahun 2019, ia mengikuti Permaculture Design Course untuk memperdalam pemahamannya tentang sistem pangan yang resilien. Tahlia mengembangkan pendekatan yang menghubungkan pangan, komunitas, seni, dan film.'
-    ]
-  },
-  {
-    id: 'bellina-erby',
-    name: 'Bellina Erby',
-    birthInfo: 'Lahir 1989',
-    photo: '/profile-erby.jpg',
-    bio: [
-      'Adalah seorang Periset pangan dan Pekerja Budaya asal Jakarta, Indonesia. Ia memperoleh gelar Sarjana dalam bidang Filsafat Seni dari Universitas Indonesia dan penerima beasiswa program The Gramounce-Alternative Master 2024/2025 untuk studi pangan berbasis riset seni. Erby mendedikasikan riset dan karyanya untuk menghubungkan individu dan kolektif dalam proyek kolaboratif, dengan fokus pada praktik Kolektif, Budaya Kuliner, Isu Migrasi, dan Perempuan.',
-      'Pada tahun 2017, ia menjadi bagian dari tim kuratorial untuk ok. Pangan - Festival Seni Media Indonesia ke-8, OK. Video, yang merupakan biennale seni media yang didirikan oleh ruangrupa pada tahun 2003. Pada tahun 2018, Bellina mengkurasi proyek riset kolaboratif antara Inggris dan Indonesia mengenai pelestarian pangan lokal bagi masyarakat Dayak Iban di Sungai Utik, Kalimantan Barat.',
-      'Sejak tahun 2019, ia telah mengoordinasikan proyek solidaritas keadilan pangan dengan delapan inisiatif pangan di SWANA, Asia, Afrika, dan Amerika Latin sembari mendirikan ruang kolaboratif interdisipliner bersama seniman, petani urban, dan warga Jagakarsa bernama Selarasa - Jagakarsa Food Lab.',
-      'Erby juga pernah menjabat sebagai asisten direktur artistik dan asisten kuratorial untuk program musik di documenta fifteen, dan sejak itu menetap di Kassel, Jerman. Ia juga merupakan bagian dari Gudskul: Studi Kolektif dan Ekosistem Seni Rupa Kontemporer.',
-      'Saat ini, dengan para perempuan seniman berlatar belakang migrasi, ia mendirikan misprints in riso, sebuah studio risography dan perpustakaan alternatif di Kassel untuk koleksi risografi dari negara-negara bumi bagian Selatan.'
-    ]
-  },
-  {
-    id: 'risya-ayudya',
-    name: 'Ayunin Widya Risya',
-    aka: 'Risya Ayudya',
-    birthInfo: 'Ponorogo, 8 Maret 1989',
-    photo: '/profile-risya.jpg',
-    contact: {
-      email: 'risyaayudya@gmail.com',
-      phone: '(+62) 85648660112',
-      address: 'Jalan Purwamadya I Blok W No 24, Kav dki, Jagakarsa, Jakarta Selatan'
-    },
-    bio: [
-      'Ayunin Widya Risya, also known as Risya Ayudya, is an art manager, artist and cook - based in Surabaya and Jakarta. Received Bachelor\'s degree of Pedagogy of Art from Faculty of Art and Literature at Surabaya State University, Indonesia (2015). Her latest works around fiber art, focused on macrame and plants. Also about food, land, climate change, and circular economy about food chains. She likes cooking and exploring local ingredients from any area. She is also manager for the collectives, organizing an art project, research and exhibition.',
-      'Ayunin Widya Risya, atau biasa dikenal dengan Risya Ayudya adalah seorang seniman dan manajer seni yang berasal dari Surabaya, Jawa Timur. Mengemban Pendidikan di Universitas Negeri Surabaya dengan jurusan Pendidikan Seni Rupa. Karyanya berkisar tentang pangan, lahan, perubahan iklim dan ekonomi sirkular pada rantai makanan. Risya gemar memasak dan mengeksplorasi bahan pangan lokal yang ia jumpai dari risetnya di wilayah-wilayah Indonesia menjadi menu yang memiliki nilai tambah. Risya juga sering mengambil peran sebagai manajer di beberapa inisiatif, dan institusi, serta pada proyek, riset dan pameran.'
-    ]
-  },
-  {
-    id: 'anita-bonit',
-    name: 'Anita Bonit',
-    birthInfo: 'Lahir 1990, Jakarta',
-    photo: '/profile-bonit.jpg',
-    bio: [
-      'Anita Bonit adalah seorang ibu, manajer seni, kurator, dan seniman yang berfokus pada seni cetak, refleksi diri, humor, dan kerja kolektif. Pada tahun 2012, ia mendirikan Grafis Huru Hara (GHH), sebuah kolektif seni grafis di Jakarta, dan berperan sebagai manajer hingga 2018. Sejak 2008, ia aktif mengikuti pameran, membuat proyek kolaboratif, serta mengembangkan studio seni cetak sebagai ruang alternatif untuk berkarya dan belajar.',
-      'Dalam karyanya, Bonit sering menampilkan figur perempuan dan hewan sebagai cara bercerita tentang pengalaman hidup sehari-hari. Ia menggunakan pendekatan yang ringan dan humoris, namun tetap dekat dengan hal-hal personal. Banyak karyanya mengangkat kehidupan domestik dan rutinitas rumah tangga, yang ia lihat bukan hanya sebagai pekerjaan sehari-hari, tetapi juga sebagai ruang untuk berpikir dan berkreasi.',
-      'Makanan dan bahan dapur juga sering muncul dalam karyanya, sebagai cara untuk menghubungkan cerita pribadi dengan isu budaya dan ekonomi yang lebih luas. Dari hal-hal sederhana seperti memasak atau pekerjaan rumah, ia melihat adanya cerita tentang perawatan, ketahanan hidup, dan ingatan bersama.',
-      'Bonit telah terlibat dalam berbagai pameran dan proyek seni di Indonesia dan luar negeri seperti Jakarta Biennale, Pekan Kebudayaan Nasional, documenta fifteen di Kassel, Momentum Biennale di Norwegia, serta proyek di Toronto, Tokyo, Seoul, Kyoto, Nagoya, Yamaguchi, Bangkok, Singapore dan Sydney.',
-      'Bonit juga merupakan bagian dari Selarasa Jagakarsa Food Lab, sebuah kelompok yang bergerak di isu pangan, pertanian kota, dan seni. Di Selarasa, ia berperan di bagian artistik, yaitu menerjemahkan proses dan hasil riset menjadi bentuk visual agar lebih mudah dipahami dan dinikmati oleh publik.',
-      'Sejak 2016, Bonit terlibat dalam Gudskul di Jakarta sebagai manajer program. Ia juga menjadi Koordinator Workshop dalam Program Studi Kolektif Gudskul, yang berfokus pada kerja studio cara berkarya dan eksplorasi media dalam praktik seni.'
-    ]
-  }
-];
-
-const profiles = [
+const profileSections = [
   {
     id: 'selarasa',
     title: 'Profil Selarasa',
@@ -140,11 +72,6 @@ const Profil = () => {
   const location = useLocation();
   const [selectedProfile, setSelectedProfile] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
-  const openProfileModal = (profile) => {
-    setSelectedProfile(profile);
-    setIsModalOpen(true);
-  };
 
   const closeProfileModal = () => {
     setIsModalOpen(false);
@@ -308,7 +235,7 @@ const Profil = () => {
       
       
       {/* Detail Sections */}
-      {profiles.filter(p => !p.isExternal).map((profile, index) => (
+      {profileSections.filter(p => !p.isExternal).map((profile, index) => (
         <section
           key={profile.id}
           id={profile.id}

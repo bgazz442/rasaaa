@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, Calendar, Image, Play, ChevronLeft, ChevronRight } from 'lucide-react';
+import { X, Calendar, Play, ChevronLeft, ChevronRight } from 'lucide-react';
 import pameranHeroVideo from '../assets/videos/pameran-hero-bg.mp4';
 import pameran1 from '../assets/images/pameran-1.jpg';
 import pameran2 from '../assets/images/pameran-2.jpg';
@@ -79,7 +79,6 @@ const exhibitionsData = [
 
 const Pameran = () => {
   const [lightbox, setLightbox] = useState({ open: false, images: [], currentIndex: 0 });
-  const [videoRef, setVideoRef] = useState(null);
   const [videoRefs, setVideoRefs] = useState(new Set());
 
   const openLightbox = (images, index) => {
@@ -212,7 +211,6 @@ const Pameran = () => {
         <div className="absolute inset-0 bg-gradient-to-b from-earth-dark/90 via-earth-dark/80 to-earth-brown/90">
           <video
             ref={(ref) => {
-              setVideoRef(ref);
               if (ref) addVideoRef(ref);
             }}
             src={pameranHeroVideo}

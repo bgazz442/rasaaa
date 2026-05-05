@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { X, Users, Briefcase, Camera } from 'lucide-react';
+import { X, Users, Briefcase } from 'lucide-react';
 import DarkVeil from '../components/DarkVeil';
-import LightRays from '../components/LightRays';
 import memberJulian from '../assets/images/member-julian.jpg';
 import memberTahlia from '../assets/images/member-tahlia.jpg';
 import memberBellina from '../assets/images/member-bellina.jpg';
@@ -162,88 +161,73 @@ const Member = () => {
         </div>
       </section>
 
-      {/* Member Detail Modal */}
+      {/* Member Detail Modal - FIXED */}
       {selectedMember && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
           onClick={() => setSelectedMember(null)}
         >
           <div
-            className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+            className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal Header - Single Photo */}
-            <div className="relative h-64 md:h-80">
-              <img
-                src={selectedMember.photo}
-                alt={selectedMember.name}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent" />
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+              <h2 className="text-lg font-bold text-gray-900">Profil Member</h2>
               <button
                 onClick={() => setSelectedMember(null)}
-                className="absolute top-4 right-4 w-12 h-12 bg-white/90 backdrop-blur-sm rounded-full flex items-center justify-center text-gray-800 hover:bg-white transition-all duration-300 shadow-lg"
+                className="w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
               >
-                <X className="w-6 h-6" />
+                <X className="w-5 h-5 text-gray-700" />
               </button>
-              <div className="absolute bottom-6 left-6 right-6">
-                <h3 className="text-3xl md:text-4xl font-serif font-bold text-white mb-2">
-                  {selectedMember.name}
-                </h3>
-                <p className="text-white/80 text-sm md:text-base">
-                  Anggota Komunitas Selarasa
-                </p>
-              </div>
             </div>
 
-            {/* Modal Content */}
-            <div className="p-6 md:p-8 space-y-6">
-              {/* Biodata */}
-              <div className="bg-gray-50 rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-earth-green/10 rounded-full flex items-center justify-center">
-                    <Users className="w-5 h-5 text-earth-green" />
-                  </div>
-                  <h4 className="font-bold text-earth-dark text-lg">Biodata</h4>
+            {/* Content - Responsive Layout */}
+            <div className="p-4 md:p-6">
+              <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+                
+                {/* Photo - Mobile: full width, Desktop: fixed width */}
+                <div className="w-full md:w-64 flex-shrink-0">
+                  <img
+                    src={selectedMember.photo}
+                    alt={selectedMember.name}
+                    className="w-full h-48 md:h-80 object-cover rounded-xl shadow-lg"
+                  />
                 </div>
-                <p className="text-gray-700 leading-relaxed">
-                  {selectedMember.bio}
-                </p>
-              </div>
 
-              {/* Kontribusi */}
-              <div className="bg-gray-50 rounded-2xl p-6">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-10 h-10 bg-earth-green/10 rounded-full flex items-center justify-center">
-                    <Briefcase className="w-5 h-5 text-earth-green" />
+                {/* Info */}
+                <div className="flex-1 flex flex-col gap-4">
+                  {/* Name */}
+                  <div>
+                    <h3 className="text-2xl font-serif font-bold text-gray-900">
+                      {selectedMember.name}
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Anggota Komunitas Selarasa
+                    </p>
                   </div>
-                  <h4 className="font-bold text-earth-dark text-lg">Hasil Karya & Kontribusi</h4>
-                </div>
-                <p className="text-gray-700 leading-relaxed">
-                  {selectedMember.kontribusi}
-                </p>
-              </div>
 
-              {/* Dokumentasi - Single Featured Photo */}
-              {selectedMember.dokumentasi && selectedMember.dokumentasi.length > 0 && (
-                <div>
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="w-10 h-10 bg-earth-green/10 rounded-full flex items-center justify-center">
-                      <Camera className="w-5 h-5 text-earth-green" />
-                    </div>
-                    <h4 className="font-bold text-earth-dark text-lg">Dokumentasi</h4>
+                  {/* Biodata */}
+                  <div className="bg-amber-50 rounded-xl p-4">
+                    <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">
+                      Biodata
+                    </h4>
+                    <p className="text-sm text-gray-700 leading-relaxed">
+                      {selectedMember.bio}
+                    </p>
                   </div>
-                  <div className="bg-gray-50 rounded-2xl p-6">
-                    <div className="aspect-video md:aspect-[16/9] rounded-xl overflow-hidden">
-                      <img
-                        src={selectedMember.dokumentasi[0]}
-                        alt={`Dokumentasi ${selectedMember.name}`}
-                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
-                      />
-                    </div>
+
+                  {/* Kontribusi */}
+                  <div className="bg-amber-50 rounded-xl p-4">
+                    <h4 className="text-xs font-semibold text-gray-700 uppercase tracking-wide mb-2">
+                      Hasil Karya & Kontribusi
+                    </h4>
+                    <p className="text-sm text-gray-700 leading-relaxed">
+                      {selectedMember.kontribusi}
+                    </p>
                   </div>
                 </div>
-              )}
+              </div>
             </div>
           </div>
         </div>

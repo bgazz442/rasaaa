@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Bot } from 'lucide-react';
@@ -47,7 +47,7 @@ const EnhancedLiquidGlassNav = () => {
       <div
         className="absolute inset-0 pointer-events-none rounded-full"
         style={{
-          background: 'rgba(255, 255, 255, 0.3)',
+          background: 'rgba(255, 255, 255, 0.6)',
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
           border: '0.5px solid rgba(255, 255, 255, 0.5)',
@@ -72,7 +72,7 @@ const EnhancedLiquidGlassNav = () => {
         <div 
           className="absolute inset-0"
           style={{
-            background: 'rgba(255, 255, 255, 0.75)',
+            background: 'rgba(255, 255, 255, 0.95)',
             backdropFilter: 'blur(20px) saturate(180%)',
             WebkitBackdropFilter: 'blur(20px) saturate(180%)',
             borderBottom: '1px solid rgba(255, 255, 255, 0.3)',
@@ -103,7 +103,7 @@ const EnhancedLiquidGlassNav = () => {
                 <div
                   className="absolute inset-0 rounded-full"
                   style={{
-                    background: 'rgba(255, 255, 255, 0.2)',
+                    background: 'rgba(255, 255, 255, 0.6)',
                     backdropFilter: 'blur(12px)',
                     WebkitBackdropFilter: 'blur(12px)',
                     border: '1px solid rgba(255, 255, 255, 0.4)',
@@ -149,7 +149,7 @@ const EnhancedLiquidGlassNav = () => {
               <div
                 className="overflow-hidden rounded-full"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.25)',
+                  background: 'rgba(255, 255, 255, 0.7)',
                   backdropFilter: 'blur(10px)',
                   WebkitBackdropFilter: 'blur(10px)',
                   border: '1px solid rgba(255, 255, 255, 0.4)',
@@ -197,7 +197,7 @@ const EnhancedLiquidGlassNav = () => {
               <div 
                 className="rounded-full overflow-hidden"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.25)',
+                  background: 'rgba(255, 255, 255, 0.7)',
                   backdropFilter: 'blur(10px)',
                   WebkitBackdropFilter: 'blur(10px)',
                   border: '1px solid rgba(255, 255, 255, 0.4)',
@@ -221,7 +221,7 @@ const EnhancedLiquidGlassNav = () => {
               <div 
                 className="rounded-full overflow-hidden"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.25)',
+                  background: 'rgba(255, 255, 255, 0.7)',
                   backdropFilter: 'blur(10px)',
                   WebkitBackdropFilter: 'blur(10px)',
                   border: '1px solid rgba(255, 255, 255, 0.4)',
@@ -293,7 +293,7 @@ const EnhancedLiquidGlassNav = () => {
               <div
                 className="absolute inset-0"
                 style={{
-                  background: 'rgba(255, 255, 255, 0.85)',
+                  background: 'rgba(255, 255, 255, 0.98)',
                   backdropFilter: 'blur(30px) saturate(180%)',
                   WebkitBackdropFilter: 'blur(30px) saturate(180%)',
                   borderLeft: '1px solid rgba(255, 255, 255, 0.5)',
@@ -307,7 +307,7 @@ const EnhancedLiquidGlassNav = () => {
                   <div
                     className="rounded-full overflow-hidden"
                     style={{
-                      background: 'rgba(255, 255, 255, 0.4)',
+                      background: 'rgba(255, 255, 255, 0.7)',
                       backdropFilter: 'blur(10px)',
                       WebkitBackdropFilter: 'blur(10px)',
                       border: '1px solid rgba(255, 255, 255, 0.6)',
@@ -350,7 +350,7 @@ const EnhancedLiquidGlassNav = () => {
                                 mass: 0.5,
                               }}
                               style={{
-                                background: 'rgba(255, 255, 255, 0.6)',
+                                background: 'rgba(255, 255, 255, 0.8)',
                                 backdropFilter: 'blur(10px)',
                                 WebkitBackdropFilter: 'blur(10px)',
                                 border: '0.5px solid rgba(255, 255, 255, 0.8)',
@@ -425,7 +425,7 @@ const EnhancedLiquidGlassNav = () => {
           >
             <div
               style={{
-                background: 'rgba(255, 255, 255, 0.85)',
+                background: 'rgba(255, 255, 255, 0.98)',
                 backdropFilter: 'blur(30px) saturate(180%)',
                 WebkitBackdropFilter: 'blur(30px) saturate(180%)',
                 borderBottom: '1px solid rgba(255, 255, 255, 0.3)',

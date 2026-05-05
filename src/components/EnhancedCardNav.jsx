@@ -135,7 +135,7 @@ const EnhancedCardNav = () => {
         ref={overlayRef}
         className="fixed inset-0 z-40 pointer-events-none"
         style={{
-          background: 'rgba(0, 0, 0, 0.3)',
+          background: 'rgba(0, 0, 0, 0.5)',
           backdropFilter: 'blur(8px)',
           WebkitBackdropFilter: 'blur(8px)',
           opacity: 0,
@@ -163,7 +163,7 @@ const EnhancedCardNav = () => {
           <div 
             className="absolute inset-0"
             style={{
-              background: 'rgba(255, 255, 255, 0.6)',
+              background: 'rgba(255, 255, 255, 0.9)',
               backdropFilter: 'blur(25px) saturate(180%)',
               WebkitBackdropFilter: 'blur(25px) saturate(180%)',
               borderRadius: '24px',
@@ -208,8 +208,8 @@ const EnhancedCardNav = () => {
                   className="rounded-full overflow-hidden"
                   style={{
                     background: isAiOpen
-                      ? 'rgba(255, 255, 255, 0.4)'
-                      : 'rgba(255, 255, 255, 0.25)',
+                      ? 'rgba(255, 255, 255, 0.8)'
+                      : 'rgba(255, 255, 255, 0.7)',
                     backdropFilter: 'blur(12px)',
                     WebkitBackdropFilter: 'blur(12px)',
                     border: '1px solid rgba(139, 115, 85, 0.3)',
@@ -235,8 +235,8 @@ const EnhancedCardNav = () => {
                   className="rounded-full overflow-hidden"
                   style={{
                     background: isOpen
-                      ? 'rgba(255, 255, 255, 0.4)'
-                      : 'rgba(255, 255, 255, 0.25)',
+                      ? 'rgba(255, 255, 255, 0.8)'
+                      : 'rgba(255, 255, 255, 0.7)',
                     backdropFilter: 'blur(12px)',
                     WebkitBackdropFilter: 'blur(12px)',
                     border: '1px solid rgba(139, 115, 85, 0.3)',
@@ -270,7 +270,7 @@ const EnhancedCardNav = () => {
                           <div
                             className="absolute inset-0 rounded-xl"
                             style={{
-                              background: 'rgba(255, 255, 255, 0.4)',
+                              background: 'rgba(255, 255, 255, 0.8)',
                               backdropFilter: 'blur(12px)',
                               WebkitBackdropFilter: 'blur(12px)',
                               border: '0.5px solid rgba(139, 115, 85, 0.4)',

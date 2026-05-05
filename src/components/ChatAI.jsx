@@ -37,7 +37,6 @@ const TypewriterText = ({ content, onComplete }) => {
 const getPageContext = () => {
   try {
     const pageName = window.location.pathname.replace('/', '') || 'home';
-    const pageTitles = document.querySelectorAll('h1, h2, h3');
     const pageText = document.body.innerText?.substring(0, 3000) || '';
     return { pageName, pageText: pageText.slice(0, 2000) };
   } catch (e) {
@@ -303,7 +302,7 @@ const ChatAI = ({ isOpen, onClose, isMobile, pageContext = '' }) => {
       }]);
       setIsTyping(false);
     }
-  }, [input, isTyping]);
+  }, [input, isTyping, currentPageContext]);
 
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'Enter' && !e.shiftKey) {

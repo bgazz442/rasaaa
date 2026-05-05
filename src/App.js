@@ -2,7 +2,6 @@ import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import NavbarWrapper from './components/NavbarWrapper';
 import Footer from './components/Footer';
-import MobileDock from './components/MobileDock';
 import EntryGate from './components/EntryGate';
 import './index.css';
 
@@ -84,8 +83,7 @@ function AppContent() {
           </Suspense>
         </main>
         {!hideLayout && <Footer />}
-        {!hideLayout && <MobileDock />}
-      </div>
+              </div>
     </>
   );
 }
