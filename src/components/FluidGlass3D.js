@@ -42,7 +42,6 @@ function FluidGlassBar({ navItems, activeIndex, onItemHover, onItemLeave }) {
   const barGeometry = useMemo(() => new THREE.BoxGeometry(10, 1, 0.8), []);
   const { viewport, camera, gl } = useThree();
   const [scene] = useState(() => new THREE.Scene());
-  const [hoveredText, setHoveredText] = useState(null);
   
   // Device detection for responsive sizing
   const getScale = () => {
@@ -154,11 +153,9 @@ function FluidGlassBar({ navItems, activeIndex, onItemHover, onItemLeave }) {
               font="https://fonts.gstatic.com/s/inter/v13/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuGKYAZ9hiJ-Ek-_EeA.woff2"
               onPointerOver={(e) => {
                 e.stopPropagation();
-                setHoveredText(index);
                 onItemHover?.(index);
               }}
               onPointerOut={() => {
-                setHoveredText(null);
                 onItemLeave?.();
               }}
               onClick={(e) => {

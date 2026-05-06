@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sprout, HandHeart, BookOpen } from 'lucide-react';
+import { Sprout, BookOpen, HandHeart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import MediaCarousel from '../components/MediaCarousel';
 
@@ -9,7 +9,7 @@ const Home = () => {
       {/* Hero Section */}
       <section className="relative pt-8 pb-8 md:pt-12 md:pb-12 lg:pt-20 lg:pb-20 w-full">
         <div className="w-full px-4 md:max-w-7xl md:mx-auto md:px-8 flex flex-col lg:flex-row items-center justify-between min-h-[90vh]">
-        <div className="lg:w-1/2 z-10 lg:pr-12">
+        <div className="lg:w-1/2 z-10 lg:pr-12 pt-16 md:pt-0">
           <div className="inline-flex items-center space-x-2 bg-earth-sand/20 text-earth-green px-4 py-2 rounded-full text-sm font-medium mb-6">
             <Sprout className="w-4 h-4" />
             <span>Kolektif Pangan & Urban Farming</span>
@@ -34,20 +34,6 @@ const Home = () => {
           </div>
         </div>
         
-        {/* Kolaborasi - Mobile Only */}
-        <div className="md:hidden lg:hidden">
-          <div className="absolute -bottom-8 -left-8 bg-earth-cream p-6 rounded-2xl shadow-xl shadow-earth-dark/5 border border-earth-sand/20 animate-fade-in-up" style={{animationDelay: '0.4s'}}>
-             <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 rounded-full bg-earth-green/10 flex items-center justify-center">
-                  <HandHeart className="w-6 h-6 text-earth-green" />
-                </div>
-                <div>
-                  <p className="font-serif font-bold text-earth-dark text-lg">Kolaborasi</p>
-                  <p className="text-sm text-earth-brown/70">Terbuka untuk semua</p>
-                </div>
-             </div>
-          </div>
-        </div>
         
         {/* Media Carousel */}
         <div className="lg:w-1/2 mt-16 lg:mt-0 relative">

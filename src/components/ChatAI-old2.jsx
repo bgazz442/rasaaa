@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Send, Bot, Maximize2, Minimize2 } from 'lucide-react';
+import { X, Send, Bot } from 'lucide-react';
+import { sendToAI } from '../lib/ai-client';
 
 const TypewriterText = ({ content, onComplete }) => {
   const [displayedContent, setDisplayedContent] = useState('');
@@ -47,28 +48,21 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [typingMessageId, setTypingMessageId] = useState(null);
-  const [isMinimized, setIsMinimized] = useState(false);
-  const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
-  
+  const [sessionId] = useState(() => `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
-  const chatRef = useRef(null);
-
-  // Focus input when chat opens
-  useEffect(() => {
-    if (isOpen && inputRef.current && !isMinimized) {
-      setTimeout(() => inputRef.current?.focus(), 100);
-    }
-  }, [isOpen, isMinimized]);
 
   // Auto scroll to bottom when new messages arrive
   useEffect(() => {
-    if (!isMinimized) {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  // Focus input when chat opens
+  useEffect(() => {
+    if (isOpen && inputRef.current) {
+      setTimeout(() => inputRef.current?.focus(), 100);
     }
-  }, [messages, isMinimized]);
+  }, [isOpen]);
 
   const handleTypingComplete = useCallback((msgId) => {
     setMessages(prev => prev.map(msg => 
@@ -98,23 +92,13 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
 
     try {
       // Send to backend API
-      const response = await fetch('http://localhost:5000/api/chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pesan: userMessage })
-      });
-      
-      const data = await response.json();
-
-      if (data.status === "error") {
-        throw new Error(data.message);
-      }
+      const { reply } = await sendToAI(userMessage, sessionId);
 
       // Add AI response
       const assistantMsg = {
         id: Date.now() + 1,
         role: 'assistant',
-        content: data.reply,
+        content: reply,
         isTyping: true,
         isNew: true
       };
@@ -136,7 +120,7 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
       setMessages(prev => [...prev, errorMsg]);
       setIsTyping(false);
     }
-  }, [input, isTyping]);
+  }, [input, sessionId, isTyping]);
 
   // Handle Enter key
   const handleKeyDown = useCallback((e) => {
@@ -145,42 +129,6 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
       sendMessage();
     }
   }, [sendMessage]);
-
-  // Drag handlers for desktop
-  const handleMouseDown = useCallback((e) => {
-    if (isMobile || isMinimized) return;
-    
-    setIsDragging(true);
-    setDragStart({
-      x: e.clientX - position.x,
-      y: e.clientY - position.y
-    });
-  }, [isMobile, position, isMinimized]);
-
-  const handleMouseMove = useCallback((e) => {
-    if (!isDragging || isMobile) return;
-    
-    setPosition({
-      x: e.clientX - dragStart.x,
-      y: e.clientY - dragStart.y
-    });
-  }, [isDragging, dragStart, isMobile]);
-
-  const handleMouseUp = useCallback(() => {
-    setIsDragging(false);
-  }, []);
-
-  useEffect(() => {
-    if (isDragging) {
-      document.addEventListener('mousemove', handleMouseMove);
-      document.addEventListener('mouseup', handleMouseUp);
-      
-      return () => {
-        document.removeEventListener('mousemove', handleMouseMove);
-        document.removeEventListener('mouseup', handleMouseUp);
-      };
-    }
-  }, [isDragging, handleMouseMove, handleMouseUp]);
 
   const chatMessages = useMemo(() => {
     return messages.map((msg) => {
@@ -242,24 +190,27 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  // Mobile: Full screen overlay
-  if (isMobile) {
-    return (
-      <AnimatePresence>
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        className={`fixed inset-0 z-50 flex items-center justify-center p-4 ${
+          isMobile ? 'bg-black/90' : 'bg-black/50'
+        }`}
+        onClick={onClose}
+      >
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
-          onClick={onClose}
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.9, opacity: 0 }}
+          className={`w-full h-full flex flex-col ${
+            isMobile ? 'max-w-full' : 'max-w-2xl max-h-[80vh]'
+          }`}
+          onClick={(e) => e.stopPropagation()}
         >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.9, opacity: 0 }}
-            className="w-full h-full max-w-sm flex flex-col bg-[#1A1A1A]/95 backdrop-blur-xl border border-white/10 shadow-2xl overflow-hidden rounded-2xl text-white"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="flex flex-col h-full bg-[#1A1A1A]/95 backdrop-blur-xl border border-white/10 shadow-2xl overflow-hidden rounded-2xl text-white">
             {/* Header */}
             <div className="px-4 py-3 border-b border-white/10 flex justify-between items-center bg-black/20 shrink-0">
               <div className="flex items-center gap-2">
@@ -274,12 +225,14 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
                   </span>
                 </div>
               </div>
-              <button 
-                onClick={onClose} 
-                className="p-2 rounded-full hover:bg-white/10 transition-colors"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              {!isMobile && (
+                <button 
+                  onClick={onClose} 
+                  className="p-2 rounded-full hover:bg-white/10 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
             </div>
 
             {/* Messages */}
@@ -318,103 +271,8 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
                 </button>
               </form>
             </div>
-          </motion.div>
+          </div>
         </motion.div>
-      </AnimatePresence>
-    );
-  }
-
-  // Desktop: Small draggable window
-  return (
-    <AnimatePresence>
-      <motion.div
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.8 }}
-        ref={chatRef}
-        style={{
-          position: 'fixed',
-          right: '20px',
-          bottom: '20px',
-          width: isMinimized ? '300px' : '400px',
-          height: isMinimized ? '60px' : '500px',
-          transform: `translate(${position.x}px, ${position.y}px)`,
-          zIndex: 9999,
-          cursor: isDragging ? 'grabbing' : 'grab'
-        }}
-        className="bg-[#1A1A1A]/95 backdrop-blur-xl border border-white/10 shadow-2xl overflow-hidden rounded-2xl text-white"
-        onMouseDown={handleMouseDown}
-      >
-        {/* Header */}
-        <div className="px-4 py-3 border-b border-white/10 flex justify-between items-center bg-black/20 shrink-0">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-[#8B7355] to-[#6B5344] flex items-center justify-center">
-              <Bot className="w-3 h-3 text-white" />
-            </div>
-            <div>
-              <h3 className="font-semibold text-[12px] font-sans">Selarasa AI</h3>
-              <span className="text-[10px] text-green-400 flex items-center gap-1">
-                <span className="w-1 h-1 bg-green-400 rounded-full" />
-                Online
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center gap-1">
-            <button
-              onClick={() => setIsMinimized(!isMinimized)}
-              className="p-1 rounded-full hover:bg-white/10 transition-colors"
-            >
-              {isMinimized ? <Maximize2 className="w-3 h-3" /> : <Minimize2 className="w-3 h-3" />}
-            </button>
-            <button 
-              onClick={onClose} 
-              className="p-1 rounded-full hover:bg-white/10 transition-colors"
-            >
-              <X className="w-3 h-3" />
-            </button>
-          </div>
-        </div>
-
-        {/* Messages - Hidden when minimized */}
-        {!isMinimized && (
-          <>
-            <div className="flex-1 overflow-y-auto p-3 space-y-3 custom-scrollbar min-h-0">
-              {chatMessages}
-              {typingIndicator}
-              <div ref={messagesEndRef} />
-            </div>
-
-            {/* Input */}
-            <div className="p-2 bg-black/20 border-t border-white/10 shrink-0">
-              <form
-                onSubmit={(e) => { e.preventDefault(); sendMessage(); }}
-                className="relative flex items-end bg-white/5 rounded-lg border border-white/10 focus-within:border-[#8B7355]/50 transition-colors"
-              >
-                <textarea
-                  ref={inputRef}
-                  value={input}
-                  onChange={(e) => setInput(e.target.value)}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Tanya tentang Selarasa..."
-                  className="w-full bg-transparent text-xs text-white resize-none max-h-20 p-2 pr-8 outline-none scrollbar-hide flex-1 placeholder:text-gray-500"
-                  rows={1}
-                  style={{ minHeight: '32px' }}
-                  onInput={(e) => {
-                    e.target.style.height = 'auto';
-                    e.target.style.height = `${Math.min(e.target.scrollHeight, 80)}px`;
-                  }}
-                />
-                <button
-                  type="submit"
-                  disabled={!input.trim() || isTyping}
-                  className="absolute right-1 bottom-1 p-1 rounded text-[#8B7355] hover:bg-[#8B7355]/20 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
-                >
-                  <Send className="w-3 h-3" />
-                </button>
-              </form>
-            </div>
-          </>
-        )}
       </motion.div>
     </AnimatePresence>
   );

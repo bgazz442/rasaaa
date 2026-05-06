@@ -56,10 +56,12 @@ export const put = (endpoint, data) => apiRequest(endpoint, {
  */
 export const del = (endpoint) => apiRequest(endpoint, { method: 'DELETE' });
 
-export default {
+const apiService = {
   get,
   post,
   put,
   delete: del,
   apiRequest
 };
+
+export default apiService;

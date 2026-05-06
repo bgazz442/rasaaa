@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, Users, ThumbsUp, Clock, Heart, Share2, Filter, Search, TrendingUp } from 'lucide-react';
+import { MessageCircle, ThumbsUp, Clock, Heart, Share2, Search } from 'lucide-react';
 
 // Data dummy untuk jawaban pengunjung
 const forumData = [
