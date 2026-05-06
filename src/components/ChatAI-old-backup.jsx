@@ -39,7 +39,7 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
     { 
       id: Date.now(), 
       role: 'assistant', 
-      content: 'Halo! Ada yang bisa saya bantu agar harimu lebih selaras?',
+      content: 'Halo! Ada yang bisa saya bantu tentang layanan Selarasa hari ini?',
       isTyping: false,
       isNew: true
     }
@@ -48,8 +48,14 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
   const [isTyping, setIsTyping] = useState(false);
   const [typingMessageId, setTypingMessageId] = useState(null);
   
+  // Draggable states
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+  const chatRef = useRef(null);
 
   // Focus input when chat opens
   useEffect(() => {
@@ -90,30 +96,39 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
     setIsTyping(true);
 
     try {
-      // Send to backend API
-      const response = await fetch('http://localhost:5000/api/chat', {
+      // Send to backend API with standard format
+      const res = await fetch('http://localhost:5000/api/chat', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ pesan: userMessage })
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ message: userMessage })
       });
-      
-      const data = await response.json();
 
-      if (data.reply) {
-        // Add AI response
-        const assistantMsg = {
-          id: Date.now() + 1,
-          role: 'assistant',
-          content: data.reply,
-          isTyping: true,
-          isNew: true
-        };
-
-        setTypingMessageId(assistantMsg.id);
-        setMessages(prev => [...prev, assistantMsg]);
-      } else {
-        throw new Error('Tidak ada respons dari AI');
+      // CEK RESPONSE VALID
+      if (!res.ok) {
+        throw new Error('Server error');
       }
+
+      const data = await res.json();
+
+      // Standard format validation
+      if (!data.success) {
+        throw new Error(data.error || 'AI error');
+      }
+
+      // Add AI response
+      const assistantMsg = {
+        id: Date.now() + 1,
+        role: 'assistant',
+        content: data.answer || 'Tidak ada respons',
+        isTyping: true,
+        isNew: true
+      };
+
+      setTypingMessageId(assistantMsg.id);
+      setMessages(prev => [...prev, assistantMsg]);
+
     } catch (error) {
       console.error('[ChatAI] Error:', error);
       
@@ -121,7 +136,7 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
       const errorMsg = {
         id: Date.now() + 2,
         role: 'assistant',
-        content: 'Duh, otaknya lagi muter nih. Coba tanya lagi ya!',
+        content: `Maaf, ${error.message}. Coba lagi ya.`,
         isTyping: false,
         isNew: false
       };
@@ -139,6 +154,48 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
     }
   }, [sendMessage]);
 
+  // Drag handlers for desktop
+  const handleMouseDown = useCallback((e) => {
+    if (isMobile) return;
+    
+    // Only drag from header area
+    const header = e.currentTarget.querySelector('[data-drag-handle]');
+    if (!header || !header.contains(e.target)) return;
+    
+    setIsDragging(true);
+    setDragStart({
+      x: e.clientX - position.x,
+      y: e.clientY - position.y
+    });
+    
+    e.preventDefault();
+  }, [isMobile, position]);
+
+  const handleMouseMove = useCallback((e) => {
+    if (!isDragging || isMobile) return;
+    
+    setPosition({
+      x: e.clientX - dragStart.x,
+      y: e.clientY - dragStart.y
+    });
+  }, [isDragging, dragStart, isMobile]);
+
+  const handleMouseUp = useCallback(() => {
+    setIsDragging(false);
+  }, []);
+
+  useEffect(() => {
+    if (isDragging) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+      
+      return () => {
+        document.removeEventListener('mousemove', handleMouseMove);
+        document.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp]);
+
   const chatMessages = useMemo(() => {
     return messages.map((msg) => {
       const isUser = msg.role === 'user';
@@ -151,16 +208,16 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="flex items-start gap-2 justify-end"
+            className="flex items-start gap-3 justify-end"
           >
-            <div className="bg-green-600 text-white p-3 rounded-2xl rounded-br-none shadow-sm max-w-[85%] text-sm">
+            <div className="bg-green-600 text-white p-4 rounded-3xl rounded-br-none shadow-sm max-w-[80%]">
               {isCurrentlyTyping ? (
                 <TypewriterText 
                   content={msg.content} 
                   onComplete={() => handleTypingComplete(msg.id)}
                 />
               ) : (
-                <p>{msg.content}</p>
+                <p className="text-sm leading-relaxed">{msg.content}</p>
               )}
             </div>
           </motion.div>
@@ -173,16 +230,19 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25, ease: "easeOut" }}
-          className="flex items-start gap-2"
+          className="flex items-start gap-3"
         >
-          <div className="bg-white p-3 rounded-2xl rounded-bl-none shadow-sm border border-gray-100 max-w-[85%] text-sm text-gray-700">
+          <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
+            <Sparkles className="w-5 h-5" />
+          </div>
+          <div className="bg-white p-4 rounded-3xl rounded-bl-none shadow-sm border border-gray-100 max-w-[80%]">
             {isCurrentlyTyping ? (
               <TypewriterText 
                 content={msg.content} 
                 onComplete={() => handleTypingComplete(msg.id)}
               />
             ) : (
-              <p>{msg.content}</p>
+              <p className="text-gray-700 text-sm leading-relaxed">{msg.content}</p>
             )}
           </div>
         </motion.div>
@@ -198,9 +258,12 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
         initial={{ opacity: 0, y: 5 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0 }}
-        className="flex items-start gap-2"
+        className="flex items-start gap-3"
       >
-        <div className="bg-white p-3 rounded-2xl rounded-bl-none shadow-sm border border-gray-100 max-w-[85%] text-sm text-gray-700 flex items-center gap-3">
+        <div className="flex-shrink-0 h-8 w-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-500">
+          <Sparkles className="w-5 h-5" />
+        </div>
+        <div className="bg-white p-4 rounded-3xl rounded-bl-none shadow-sm border border-gray-100 max-w-[80%] flex items-center gap-3">
           <div className="flex gap-1">
             <span className="w-2 h-2 bg-green-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
             <span className="w-2 h-2 bg-green-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -229,19 +292,21 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
             initial={{ scale: 0.9, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
-            className="w-full h-full max-w-sm flex flex-col overflow-hidden rounded-3xl bg-white shadow-2xl border border-gray-100 transition-all duration-300"
-            style={{ maxHeight: '80vh' }}
+            className="w-full h-full max-w-sm flex flex-col overflow-hidden rounded-3xl bg-white shadow-2xl transition-all duration-300 ease-in-out border border-gray-100"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
-            <div className="bg-gradient-to-r from-green-600 to-green-700 pt-8 pb-5 px-5 flex items-center justify-between">
+            <div 
+              data-drag-handle="true"
+              className="bg-gradient-to-r from-green-600 to-green-700 p-5 flex items-center justify-between"
+            >
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white shadow-inner">
                   <Sparkles className="w-6 h-6" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-base">Selarasa Hub</h3>
-                  <p className="text-[10px] text-green-100 uppercase tracking-widest">AI Assistant</p>
+                  <h3 className="font-bold text-white text-lg">Selarasa Hub</h3>
+                  <p className="text-xs text-green-100">Siap bantu kamu selaras.</p>
                 </div>
               </div>
               <button 
@@ -253,29 +318,29 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-5 bg-gray-50/50 flex flex-col gap-4" style={{ minHeight: '300px' }}>
+            <div className="h-96 overflow-y-auto p-6 bg-gray-50/50 flex flex-col gap-5">
               {chatMessages}
               {typingIndicator}
               <div ref={messagesEndRef} />
             </div>
 
             {/* Input */}
-            <div className="p-4 pb-6 bg-white border-t border-gray-50">
-              <div className="relative flex items-center">
+            <div className="p-4 bg-white border-t border-gray-100">
+              <div className="relative">
                 <input
                   ref={inputRef}
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
-                  placeholder="Tanya sesuatu..."
-                  className="w-full rounded-full border border-gray-200 bg-gray-50 py-3 pl-4 pr-12 text-sm focus:border-green-400 focus:outline-none transition-all"
+                  placeholder="Ketik pesanmu di sini..."
+                  className="w-full rounded-full border border-gray-200 bg-gray-50 py-3 pl-5 pr-12 text-sm focus:border-green-300 focus:ring-green-100 focus:ring-2 focus:outline-none transition"
                 />
                 <button
                   type="button"
                   onClick={sendMessage}
                   disabled={!input.trim() || isTyping}
-                  className="absolute right-1.5 p-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition shadow-md disabled:opacity-40 disabled:hover:bg-green-600"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-green-600 p-2.5 text-white hover:bg-green-700 transition shadow-sm disabled:opacity-40 disabled:hover:bg-green-600"
                 >
                   <Send className="w-4 h-4 transform rotate-90" />
                 </button>
@@ -287,25 +352,40 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
     );
   }
 
-  // Desktop: Fixed position popup
+  // Desktop: Draggable modal
   return (
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0, scale: 0.8 }}
         animate={{ opacity: 1, scale: 1 }}
         exit={{ opacity: 0, scale: 0.8 }}
-        className="fixed bottom-10 right-6 z-50 w-full max-w-[360px] flex flex-col overflow-hidden rounded-3xl bg-white shadow-2xl border border-gray-100 transition-all duration-300"
-        style={{ maxHeight: '80vh' }}
+        ref={chatRef}
+        style={{
+          position: 'fixed',
+          right: '24px',
+          bottom: '24px',
+          width: '400px',
+          height: '520px',
+          transform: `translate(${position.x}px, ${position.y}px)`,
+          zIndex: 9999,
+          cursor: isDragging ? 'grabbing' : 'default'
+        }}
+        className="overflow-hidden rounded-3xl bg-white shadow-2xl transition-all duration-300 ease-in-out border border-gray-100"
+        onMouseDown={handleMouseDown}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-green-600 to-green-700 pt-8 pb-5 px-5 flex items-center justify-between">
+        <div 
+          data-drag-handle="true"
+          className="bg-gradient-to-r from-green-600 to-green-700 p-5 flex items-center justify-between"
+          style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
+        >
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white shadow-inner">
               <Sparkles className="w-6 h-6" />
             </div>
             <div>
-              <h3 className="font-bold text-white text-base">Selarasa Hub</h3>
-              <p className="text-[10px] text-green-100 uppercase tracking-widest">AI Assistant</p>
+              <h3 className="font-bold text-white text-lg">Selarasa Hub</h3>
+              <p className="text-xs text-green-100">Siap bantu kamu selaras.</p>
             </div>
           </div>
           <button 
@@ -317,29 +397,29 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-5 bg-gray-50/50 flex flex-col gap-4" style={{ minHeight: '300px' }}>
+        <div className="h-96 overflow-y-auto p-6 bg-gray-50/50 flex flex-col gap-5">
           {chatMessages}
           {typingIndicator}
           <div ref={messagesEndRef} />
         </div>
 
         {/* Input */}
-        <div className="p-4 pb-6 bg-white border-t border-gray-50">
-          <div className="relative flex items-center">
+        <div className="p-4 bg-white border-t border-gray-100">
+          <div className="relative">
             <input
               ref={inputRef}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Tanya sesuatu..."
-              className="w-full rounded-full border border-gray-200 bg-gray-50 py-3 pl-4 pr-12 text-sm focus:border-green-400 focus:outline-none transition-all"
+              placeholder="Ketik pesanmu di sini..."
+              className="w-full rounded-full border border-gray-200 bg-gray-50 py-3 pl-5 pr-12 text-sm focus:border-green-300 focus:ring-green-100 focus:ring-2 focus:outline-none transition"
             />
             <button
               type="button"
               onClick={sendMessage}
               disabled={!input.trim() || isTyping}
-              className="absolute right-1.5 p-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition shadow-md disabled:opacity-40 disabled:hover:bg-green-600"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-full bg-green-600 p-2.5 text-white hover:bg-green-700 transition shadow-sm disabled:opacity-40 disabled:hover:bg-green-600"
             >
               <Send className="w-4 h-4 transform rotate-90" />
             </button>
