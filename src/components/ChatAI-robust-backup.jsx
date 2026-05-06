@@ -39,7 +39,7 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
     { 
       id: Date.now(), 
       role: 'assistant', 
-      content: 'Halo! Saya **Selarasa AI**. Ada yang bisa saya bantu supaya harimu lebih selaras hari ini?',
+      content: 'Halo! Nama saya **Selarasa AI**. Ada yang bisa saya bantu supaya harimu lebih selaras?',
       isTyping: false,
       isNew: true
     }
@@ -151,7 +151,7 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.25, ease: "easeOut" }}
-            className="flex items-start gap-2 justify-end"
+            className="flex items-end gap-2 justify-end"
           >
             <div className="bg-green-600 text-white p-4 rounded-2xl rounded-br-none shadow-sm max-w-[85%]">
               {isCurrentlyTyping ? (
@@ -160,7 +160,7 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
                   onComplete={() => handleTypingComplete(msg.id)}
                 />
               ) : (
-                <p className="text-sm leading-relaxed">{msg.content}</p>
+                <p className="text-[14px] leading-relaxed">{msg.content}</p>
               )}
             </div>
           </motion.div>
@@ -173,9 +173,9 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25, ease: "easeOut" }}
-          className="flex items-start gap-2 max-w-[85%]"
+          className="flex items-end gap-2"
         >
-          <div className="bg-white p-4 rounded-2xl rounded-bl-none shadow-sm border border-gray-100 text-sm text-gray-700 leading-relaxed">
+          <div className="bg-white p-4 rounded-2xl rounded-bl-none shadow-sm border border-gray-100 max-w-[85%]">
             {isCurrentlyTyping ? (
               <TypewriterText 
                 content={msg.content} 
@@ -183,6 +183,7 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
               />
             ) : (
               <p 
+                className="text-[14px] text-gray-700 leading-relaxed font-medium"
                 dangerouslySetInnerHTML={{ 
                   __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') 
                 }}
@@ -202,9 +203,9 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
         initial={{ opacity: 0, y: 5 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0 }}
-        className="flex items-start gap-2 max-w-[85%]"
+        className="flex items-end gap-2"
       >
-        <div className="bg-white p-4 rounded-2xl rounded-bl-none shadow-sm border border-gray-100 text-sm text-gray-700 leading-relaxed flex items-center gap-3">
+        <div className="bg-white p-4 rounded-2xl rounded-bl-none shadow-sm border border-gray-100 max-w-[85%] flex items-center gap-3">
           <div className="flex gap-1">
             <span className="w-2 h-2 bg-green-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
             <span className="w-2 h-2 bg-green-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -218,55 +219,52 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  // Safe-Header Version - No overflow hidden on main container
+  // Robust Mobile Design
   return (
     <AnimatePresence>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0, y: 20 }}
-        className="fixed inset-x-0 bottom-0 z-[9999] flex flex-col bg-white shadow-2xl rounded-t-[2rem] sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[380px] sm:h-[600px] sm:rounded-[2rem] transition-all duration-500 ease-in-out border border-gray-100"
-        style={{ height: '85vh', maxHeight: '85vh' }}
+        className="fixed bottom-0 right-0 z-[999] w-full sm:bottom-6 sm:right-6 sm:w-[380px] h-[90vh] sm:h-[600px] flex flex-col bg-white shadow-2xl rounded-t-[2.5rem] sm:rounded-[2rem] overflow-hidden border border-gray-100 transition-all duration-500"
       >
-        {/* Header with Maximum Safe Area */}
-        <div className="flex-shrink-0 bg-gradient-to-r from-green-600 to-green-700 pt-44 pb-6 px-6 sm:pt-8 rounded-t-[2rem] relative shadow-md">
-          
+        {/* Header with Jumbo Safe Area */}
+        <div className="relative bg-gradient-to-br from-green-600 to-green-700 pt-12 pb-6 px-6 sm:pt-7 shadow-lg flex-shrink-0">
           {/* Mobile Handle Indicator */}
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 w-10 h-1 bg-white/30 rounded-full sm:hidden"></div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-inner">
-                <Sparkles className="w-6 h-6 text-white" />
+          <div className="absolute top-2 left-1/2 -translate-x-1/2 w-12 h-1.5 bg-white/20 rounded-full sm:hidden"></div>
+          
+          <div className="flex items-center gap-4">
+            <div className="relative flex-shrink-0">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20 backdrop-blur-md text-white border border-white/30 shadow-inner">
+                <Sparkles className="w-6 h-6" />
               </div>
-              <div className="flex flex-col">
-                <span className="text-white font-bold text-lg leading-none">Selarasa AI</span>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
-                  <span className="text-[10px] text-green-50 font-medium uppercase tracking-wider">Aktif Sekarang</span>
-                </div>
-              </div>
+              <span className="absolute -bottom-0.5 -right-0.5 h-3.5 w-3.5 rounded-full border-2 border-green-600 bg-emerald-400"></span>
             </div>
 
+            <div className="flex flex-col">
+              <h3 className="font-extrabold text-white text-lg tracking-tight leading-none mb-1">Selarasa AI</h3>
+              <p className="text-[10px] text-green-100 font-bold uppercase tracking-[0.15em]">Sistem Online</p>
+            </div>
+            
             <button 
               onClick={onClose}
-              className="text-white/70 hover:text-white p-2 bg-white/10 rounded-xl transition-colors"
+              className="ml-auto bg-white/10 hover:bg-white/20 p-2 rounded-xl text-white transition"
             >
-              <X className="w-6 h-6" />
+              <X className="w-5 h-5" />
             </button>
           </div>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-5 bg-gray-50 flex flex-col gap-4">
+        <div className="flex-1 overflow-y-auto p-5 bg-[#F8FAFB] flex flex-col gap-5">
           {chatMessages}
           {typingIndicator}
           <div ref={messagesEndRef} />
         </div>
 
-        {/* Input */}
+        {/* Input with Enhanced Styling */}
         <div className="p-4 pb-10 sm:pb-6 bg-white border-t border-gray-100">
-          <div className="relative group">
+          <div className="relative flex items-center shadow-sm">
             <input
               ref={inputRef}
               type="text"
@@ -274,15 +272,15 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Tulis pesan..."
-              className="w-full bg-gray-100 py-4 pl-5 pr-14 rounded-2xl text-sm focus:ring-2 focus:ring-green-600/20 outline-none transition-all"
+              className="w-full rounded-2xl border-none bg-gray-100 py-4 pl-5 pr-14 text-[14px] focus:ring-2 focus:ring-green-600/20 transition-all outline-none text-gray-700"
             />
             <button
               type="button"
               onClick={sendMessage}
               disabled={!input.trim() || isTyping}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-green-600 text-white p-2.5 rounded-xl shadow-lg hover:bg-green-700 transition-transform active:scale-95 disabled:opacity-40 disabled:hover:bg-green-600"
+              className="absolute right-2 p-2.5 bg-green-600 text-white rounded-xl shadow-lg hover:scale-105 active:scale-95 transition-all disabled:opacity-40 disabled:hover:scale-100"
             >
-              <Send className="w-5 h-5 transform rotate-90" />
+              <Send className="w-4 h-4 transform rotate-90" />
             </button>
           </div>
         </div>

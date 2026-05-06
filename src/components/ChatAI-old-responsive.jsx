@@ -39,7 +39,7 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
     { 
       id: Date.now(), 
       role: 'assistant', 
-      content: 'Halo! Saya **Selarasa AI**. Ada yang bisa saya bantu supaya harimu lebih selaras hari ini?',
+      content: 'Halo! Ada yang bisa saya bantu agar harimu lebih selaras?',
       isTyping: false,
       isNew: true
     }
@@ -153,14 +153,14 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
             transition={{ duration: 0.25, ease: "easeOut" }}
             className="flex items-start gap-2 justify-end"
           >
-            <div className="bg-green-600 text-white p-4 rounded-2xl rounded-br-none shadow-sm max-w-[85%]">
+            <div className="bg-green-600 text-white p-3 rounded-2xl rounded-br-none shadow-sm max-w-[85%] text-sm">
               {isCurrentlyTyping ? (
                 <TypewriterText 
                   content={msg.content} 
                   onComplete={() => handleTypingComplete(msg.id)}
                 />
               ) : (
-                <p className="text-sm leading-relaxed">{msg.content}</p>
+                <p>{msg.content}</p>
               )}
             </div>
           </motion.div>
@@ -173,20 +173,16 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.25, ease: "easeOut" }}
-          className="flex items-start gap-2 max-w-[85%]"
+          className="flex items-start gap-2"
         >
-          <div className="bg-white p-4 rounded-2xl rounded-bl-none shadow-sm border border-gray-100 text-sm text-gray-700 leading-relaxed">
+          <div className="bg-white p-3 rounded-2xl rounded-bl-none shadow-sm border border-gray-100 max-w-[85%] text-sm text-gray-700">
             {isCurrentlyTyping ? (
               <TypewriterText 
                 content={msg.content} 
                 onComplete={() => handleTypingComplete(msg.id)}
               />
             ) : (
-              <p 
-                dangerouslySetInnerHTML={{ 
-                  __html: msg.content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') 
-                }}
-              />
+              <p>{msg.content}</p>
             )}
           </div>
         </motion.div>
@@ -202,9 +198,9 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
         initial={{ opacity: 0, y: 5 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0 }}
-        className="flex items-start gap-2 max-w-[85%]"
+        className="flex items-start gap-2"
       >
-        <div className="bg-white p-4 rounded-2xl rounded-bl-none shadow-sm border border-gray-100 text-sm text-gray-700 leading-relaxed flex items-center gap-3">
+        <div className="bg-white p-3 rounded-2xl rounded-bl-none shadow-sm border border-gray-100 max-w-[85%] text-sm text-gray-700 flex items-center gap-3">
           <div className="flex gap-1">
             <span className="w-2 h-2 bg-green-600 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
             <span className="w-2 h-2 bg-green-600 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
@@ -218,71 +214,135 @@ const ChatAI = ({ isMobile, isOpen, onClose }) => {
 
   if (!isOpen) return null;
 
-  // Safe-Header Version - No overflow hidden on main container
+  // Mobile: Full screen overlay
+  if (isMobile) {
+    return (
+      <AnimatePresence>
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+          style={{ padding: '1rem' }}
+          onClick={onClose}
+        >
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            exit={{ scale: 0.9, opacity: 0 }}
+            className="w-full h-full flex flex-col overflow-hidden rounded-3xl bg-white shadow-2xl border border-gray-100 transition-all duration-300"
+            style={{ height: 'calc(100vh - 2rem)', maxHeight: 'calc(100vh - 2rem)' }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="bg-gradient-to-r from-green-600 to-green-700 pt-8 pb-5 px-5 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white shadow-inner">
+                  <Sparkles className="w-6 h-6" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-base">Selarasa Hub</h3>
+                  <p className="text-[10px] text-green-100 uppercase tracking-widest">AI Assistant</p>
+                </div>
+              </div>
+              <button 
+                onClick={onClose} 
+                className="text-white/80 hover:text-white transition"
+              >
+                <X className="w-6 h-6" />
+              </button>
+            </div>
+
+            {/* Messages */}
+            <div className="flex-1 overflow-y-auto p-5 bg-gray-50/50 flex flex-col gap-4">
+              {chatMessages}
+              {typingIndicator}
+              <div ref={messagesEndRef} />
+            </div>
+
+            {/* Input */}
+            <div className="p-4 pb-6 bg-white border-t border-gray-50">
+              <div className="relative flex items-center">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  placeholder="Tanya sesuatu..."
+                  className="w-full rounded-full border border-gray-200 bg-gray-50 py-3 pl-4 pr-12 text-sm focus:border-green-400 focus:outline-none transition-all"
+                />
+                <button
+                  type="button"
+                  onClick={sendMessage}
+                  disabled={!input.trim() || isTyping}
+                  className="absolute right-1.5 p-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition shadow-md disabled:opacity-40 disabled:hover:bg-green-600"
+                >
+                  <Send className="w-4 h-4 transform rotate-90" />
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        </motion.div>
+      </AnimatePresence>
+    );
+  }
+
+  // Desktop: Fixed position popup
   return (
     <AnimatePresence>
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: 20 }}
-        className="fixed inset-x-0 bottom-0 z-[9999] flex flex-col bg-white shadow-2xl rounded-t-[2rem] sm:inset-auto sm:bottom-6 sm:right-6 sm:w-[380px] sm:h-[600px] sm:rounded-[2rem] transition-all duration-500 ease-in-out border border-gray-100"
-        style={{ height: '85vh', maxHeight: '85vh' }}
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        exit={{ opacity: 0, scale: 0.8 }}
+        className="fixed bottom-10 right-6 z-50 w-full max-w-[360px] flex flex-col overflow-hidden rounded-3xl bg-white shadow-2xl border border-gray-100 transition-all duration-300"
+        style={{ maxHeight: '80vh' }}
       >
-        {/* Header with Maximum Safe Area */}
-        <div className="flex-shrink-0 bg-gradient-to-r from-green-600 to-green-700 pt-44 pb-6 px-6 sm:pt-8 rounded-t-[2rem] relative shadow-md">
-          
-          {/* Mobile Handle Indicator */}
-          <div className="absolute top-4 left-1/2 -translate-x-1/2 w-10 h-1 bg-white/30 rounded-full sm:hidden"></div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="h-12 w-12 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center border border-white/30 shadow-inner">
-                <Sparkles className="w-6 h-6 text-white" />
-              </div>
-              <div className="flex flex-col">
-                <span className="text-white font-bold text-lg leading-none">Selarasa AI</span>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400"></span>
-                  <span className="text-[10px] text-green-50 font-medium uppercase tracking-wider">Aktif Sekarang</span>
-                </div>
-              </div>
+        {/* Header */}
+        <div className="bg-gradient-to-r from-green-600 to-green-700 pt-8 pb-5 px-5 flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-white shadow-inner">
+              <Sparkles className="w-6 h-6" />
             </div>
-
-            <button 
-              onClick={onClose}
-              className="text-white/70 hover:text-white p-2 bg-white/10 rounded-xl transition-colors"
-            >
-              <X className="w-6 h-6" />
-            </button>
+            <div>
+              <h3 className="font-bold text-white text-base">Selarasa Hub</h3>
+              <p className="text-[10px] text-green-100 uppercase tracking-widest">AI Assistant</p>
+            </div>
           </div>
+          <button 
+            onClick={onClose} 
+            className="text-white/80 hover:text-white transition"
+          >
+            <X className="w-6 h-6" />
+          </button>
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto p-5 bg-gray-50 flex flex-col gap-4">
+        <div className="flex-1 overflow-y-auto p-5 bg-gray-50/50 flex flex-col gap-4">
           {chatMessages}
           {typingIndicator}
           <div ref={messagesEndRef} />
         </div>
 
         {/* Input */}
-        <div className="p-4 pb-10 sm:pb-6 bg-white border-t border-gray-100">
-          <div className="relative group">
+        <div className="p-4 pb-6 bg-white border-t border-gray-50">
+          <div className="relative flex items-center">
             <input
               ref={inputRef}
               type="text"
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="Tulis pesan..."
-              className="w-full bg-gray-100 py-4 pl-5 pr-14 rounded-2xl text-sm focus:ring-2 focus:ring-green-600/20 outline-none transition-all"
+              placeholder="Tanya sesuatu..."
+              className="w-full rounded-full border border-gray-200 bg-gray-50 py-3 pl-4 pr-12 text-sm focus:border-green-400 focus:outline-none transition-all"
             />
             <button
               type="button"
               onClick={sendMessage}
               disabled={!input.trim() || isTyping}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-green-600 text-white p-2.5 rounded-xl shadow-lg hover:bg-green-700 transition-transform active:scale-95 disabled:opacity-40 disabled:hover:bg-green-600"
+              className="absolute right-1.5 p-2 bg-green-600 text-white rounded-full hover:bg-green-700 transition shadow-md disabled:opacity-40 disabled:hover:bg-green-600"
             >
-              <Send className="w-5 h-5 transform rotate-90" />
+              <Send className="w-4 h-4 transform rotate-90" />
             </button>
           </div>
         </div>
