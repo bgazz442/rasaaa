@@ -118,7 +118,7 @@ const About = () => {
       <section className="py-12 md:py-20 px-4">
         <div className="max-w-4xl mx-auto">
           <div className="bg-gradient-to-br from-earth-dark to-earth-brown rounded-3xl p-6 md:p-10 text-earth-cream">
-            <h2 className="text-2xl md:text-3xl font-serif font-bold mb-6">
+            <h2 className="text-2xl md:text-3xl font-serif font-bold mb-6 bg-gradient-to-r from-green-500 to-blue-400 bg-clip-text text-transparent">
               Informasi SMKN 20 Jakarta
             </h2>
             
@@ -130,7 +130,7 @@ const About = () => {
                   </div>
                   <div>
                     <p className="text-earth-cream/50 text-sm">Telepon</p>
-                    <p className="font-medium">(021) 7658890</p>
+                    <p className="font-medium">(021) 7694223</p>
                   </div>
                 </div>
 
@@ -140,7 +140,14 @@ const About = () => {
                   </div>
                   <div>
                     <p className="text-earth-cream/50 text-sm">Alamat</p>
-                    <p className="font-medium">Jl. Raya Bogor KM 26, Ciracas, Jakarta Timur 13750</p>
+                    <a
+                      href="https://maps.google.com/?q=Jl.+Melati+No.+24,+Cilandak+Barat,+Jakarta+Selatan"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="font-medium text-earth-sand hover:text-white transition-colors inline-block"
+                    >
+                      Jl. Melati No. 24, Cilandak Barat, Jakarta Selatan
+                    </a>
                   </div>
                 </div>
               </div>

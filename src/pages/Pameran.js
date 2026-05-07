@@ -333,27 +333,6 @@ const Pameran = () => {
                           poster="/foto-kegiatan-1.jpg"
                         />
                       </div>
-
-                      {/* Video Info Box */}
-                      <div className="bg-gradient-to-r from-amber-50 to-stone-50 rounded-xl p-4 border border-amber-100">
-                        <div className="flex items-start gap-3">
-                          <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
-                            <Play className="w-5 h-5 text-amber-600" />
-                          </div>
-                          <div>
-                            <h5 className="font-semibold text-earth-dark text-sm mb-1">
-                              Tentang Video Ini
-                            </h5>
-                            <p className="text-earth-dark/70 text-sm leading-relaxed">
-                              {exhibition.videoDescription || `Dokumentasi lengkap dari ${exhibition.name} yang menampilkan suasana dan aktivitas selama pameran berlangsung.`}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="mt-3 pt-3 border-t border-amber-200/50 flex items-center gap-2 text-xs text-earth-dark/50">
-                          <span className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" />
-                          <span>Klik play untuk memutar video dokumentasi</span>
-                        </div>
-                      </div>
                     </div>
                   ) : null}
                 </div>
