@@ -226,6 +226,8 @@ const ArtikelDetail = () => {
               src={article.image} 
               alt={article.title}
               className="w-full h-full object-cover"
+              loading="eager"
+              decoding="async"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
           </div>
@@ -271,6 +273,8 @@ const ArtikelDetail = () => {
                 src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=800&q=80" 
                 alt="Urban farming community"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                loading="lazy"
+                decoding="async"
               />
             </div>
             <p className="text-sm text-[#5C5548]/50 mt-4 text-center italic">
@@ -329,6 +333,8 @@ const ArtikelDetail = () => {
                 src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?w=800&q=80" 
                 alt="Hidroponik modern"
                 className="w-full h-full object-cover hover:scale-105 transition-transform duration-700"
+                loading="lazy"
+                decoding="async"
               />
             </div>
             <p className="text-sm text-[#5C5548]/50 mt-4 text-center italic">

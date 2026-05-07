@@ -63,6 +63,8 @@ const exhibitionsData = [
     date: 'November 2024',
     description: 'Pameran kuliner dan seni yang merayakan keberagaman rasa lokal. Menghadirkan hidangan tradisional, instalasi seni rasa, dan dokumentasi proses kreatif komunitas.',
     video: kenduriRasaVideo,
+    videoTitle: 'Dokumentasi Kenduri Rasa',
+    videoDescription: 'Video dokumentasi lengkap yang menampilkan suasana pameran, interaksi pengunjung dengan instalasi seni, proses penyajian hidangan tradisional, dan testimoni dari para peserta serta kurator tentang makna keberagaman rasa dalam konteks budaya lokal.',
   },
   {
     id: 5,
@@ -107,7 +109,27 @@ const Pameran = () => {
   // Handle page visibility dan user interaction untuk kontrol semua video
   React.useEffect(() => {
     let hasUserInteracted = false;
-    
+
+    const fadeInVolume = (video, targetVolume = 1.5, duration = 2000) => {
+      if (!video) return;
+
+      const startVolume = 1;
+      const volumeIncrement = (targetVolume - startVolume) / (duration / 100);
+      let currentVolume = startVolume;
+
+      video.volume = startVolume;
+
+      const fadeInterval = setInterval(() => {
+        currentVolume += volumeIncrement;
+        if (currentVolume >= targetVolume) {
+          video.volume = targetVolume;
+          clearInterval(fadeInterval);
+        } else {
+          video.volume = currentVolume;
+        }
+      }, 100);
+    };
+
     const handleUserInteraction = () => {
       hasUserInteracted = true;
       // Enable autoplay after user interaction - hanya untuk video yang visible
@@ -117,6 +139,8 @@ const Pameran = () => {
           const isVisible = rect.top < window.innerHeight && rect.bottom > 0;
           if (isVisible) {
             video.muted = false;
+            // Start with low volume and fade in
+            fadeInVolume(video, 1, 2000);
             video.play().catch(error => {
               console.log('Autoplay prevented:', error.message);
             });
@@ -157,8 +181,9 @@ const Pameran = () => {
                 }
               });
               
-              // Play video yang visible dengan suara
+              // Play video yang visible dengan suara dan fade-in volume
               video.muted = false;
+              fadeInVolume(video, 0.5, 2000);
               video.play().catch(error => {
                 console.log('Autoplay prevented:', error.message);
               });
@@ -208,21 +233,23 @@ const Pameran = () => {
       {/* Hero */}
       <section className="relative pt-24 pb-36 md:pt-32 md:pb-40 text-earth-cream overflow-hidden">
         {/* Background Video */}
-        <div className="absolute inset-0 bg-gradient-to-b from-earth-dark/90 via-earth-dark/80 to-earth-brown/90">
+        <div className="absolute inset-0">
           <video
             ref={(ref) => {
               if (ref) addVideoRef(ref);
             }}
             src={pameranHeroVideo}
             alt="Pameran Selarasa Background"
-            className="absolute inset-0 w-full h-full object-cover opacity-30"
+            className="absolute inset-0 w-full h-full object-cover"
             autoPlay
             loop
             playsInline
+            muted
             preload="metadata"
             disablePictureInPicture
             controlsList="nodownload"
           />
+          <div className="absolute inset-0 bg-gradient-to-b from-earth-dark/90 via-earth-dark/80 to-earth-brown/90" />
         </div>
         
         {/* Content */}
@@ -270,6 +297,8 @@ const Pameran = () => {
                           src={img}
                           alt={`${exhibition.name} - ${imgIdx + 1}`}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          loading={imgIdx < 2 ? "eager" : "lazy"}
+                          decoding="async"
                         />
                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/30 transition-colors duration-300 flex items-center justify-center">
                           <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white/20 backdrop-blur-sm rounded-full p-3">
@@ -280,19 +309,51 @@ const Pameran = () => {
                     ))}
                     </div>
                   ) : exhibition.video ? (
-                    <div className="relative w-full aspect-video rounded-xl overflow-hidden">
-                      <video
-                        ref={addVideoRef}
-                        src={exhibition.video}
-                        alt={`${exhibition.name} - Video Documentation`}
-                        className="w-full h-full object-cover"
-                        controls
-                        muted
-                        playsInline
-                        preload="metadata"
-                        disablePictureInPicture
-                        controlsList="nodownload"
-                      />
+                    <div className="space-y-4">
+                      {/* Video Title */}
+                      <div className="flex items-center gap-2 mb-2">
+                        <div className="w-1 h-6 bg-amber-500 rounded-full" />
+                        <h4 className="text-lg font-bold text-earth-dark">
+                          {exhibition.videoTitle || `Video Dokumentasi ${exhibition.name}`}
+                        </h4>
+                      </div>
+
+                      {/* Video Player */}
+                      <div className="relative w-full aspect-video rounded-xl overflow-hidden bg-earth-sand/20 shadow-lg ring-1 ring-earth-sand/30">
+                        <video
+                          ref={addVideoRef}
+                          src={exhibition.video}
+                          alt={`${exhibition.name} - Video Documentation`}
+                          className="w-full h-full object-cover"
+                          controls
+                          playsInline
+                          preload="metadata"
+                          disablePictureInPicture
+                          controlsList="nodownload"
+                          poster="/foto-kegiatan-1.jpg"
+                        />
+                      </div>
+
+                      {/* Video Info Box */}
+                      <div className="bg-gradient-to-r from-amber-50 to-stone-50 rounded-xl p-4 border border-amber-100">
+                        <div className="flex items-start gap-3">
+                          <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center shrink-0">
+                            <Play className="w-5 h-5 text-amber-600" />
+                          </div>
+                          <div>
+                            <h5 className="font-semibold text-earth-dark text-sm mb-1">
+                              Tentang Video Ini
+                            </h5>
+                            <p className="text-earth-dark/70 text-sm leading-relaxed">
+                              {exhibition.videoDescription || `Dokumentasi lengkap dari ${exhibition.name} yang menampilkan suasana dan aktivitas selama pameran berlangsung.`}
+                            </p>
+                          </div>
+                        </div>
+                        <div className="mt-3 pt-3 border-t border-amber-200/50 flex items-center gap-2 text-xs text-earth-dark/50">
+                          <span className="w-2 h-2 bg-amber-400 rounded-full animate-pulse" />
+                          <span>Klik play untuk memutar video dokumentasi</span>
+                        </div>
+                      </div>
                     </div>
                   ) : null}
                 </div>

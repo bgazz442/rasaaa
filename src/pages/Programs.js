@@ -1,6 +1,56 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+
+// Add custom animation styles
+const popupStyles = `
+  @keyframes popupIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9) translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+  
+  .animate-popup {
+    animation: popupIn 0.25s ease;
+  }
+`;
+
+// Inject styles into head
+if (typeof document !== 'undefined') {
+  const styleSheet = document.createElement('style');
+  styleSheet.textContent = popupStyles;
+  document.head.appendChild(styleSheet);
+}
 
 const Programs = () => {
+  const [selected, setSelected] = useState(null);
+  const [selectedDoc, setSelectedDoc] = useState(null);
+  const [previewImage, setPreviewImage] = useState(null);
+
+  // Debug: Log state changes
+  console.log('Current selectedDoc:', selectedDoc);
+  console.log('Current previewImage:', previewImage);
+
+  // Lock body scroll when any popup is open
+  useEffect(() => {
+    const isAnyPopupOpen = selected || selectedDoc || previewImage;
+    
+    if (isAnyPopupOpen) {
+      document.body.style.overflow = 'hidden';
+      document.documentElement.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      document.documentElement.style.overflow = '';
+    };
+  }, [selected, selectedDoc, previewImage]);
   const programCategories = [
     {
       title: 'Workshop',
@@ -12,18 +62,57 @@ const Programs = () => {
           description: 'Dasar-dasar bertani di kota dengan metode organik',
           duration: '2 hari',
           level: 'Pemula',
+          image: 'https://images.unsplash.com/photo-1592984337088-0b0b22950a2a?w=400&h=300&fit=crop',
+          documentation: [
+            {
+              id: 1,
+              title: 'Persiapan Media Tanam',
+              description: 'Panduan lengkap dalam menyiapkan media tanam organik untuk urban farming. Meliputi pemilihan bahan, komposisi yang tepat, dan teknik pembuatan media tanam yang ideal untuk sayuran di ruangan terbatas.',
+              image: 'https://images.unsplash.com/photo-1592984337088-0b0b22950a2a?w=600&h=400&fit=crop'
+            },
+            {
+              id: 2,
+              title: 'Pemilihan Benih',
+              description: 'Tips memilih benih yang cocok untuk urban farming, termasuk varietas sayuran yang tahan terhadap perubahan cuaca dan cocok dibudidayakan di area perkotaan dengan ruang terbatas.',
+              image: 'https://images.unsplash.com/photo-1585829365295-ab88945a5142?w=600&h=400&fit=crop'
+            }
+          ]
         },
         {
           name: 'Fermentasi Lokal',
           description: 'Membuat makanan fermentasi dari bahan pangan lokal',
           duration: '1 hari',
           level: 'Menengah',
+          image: 'https://images.unsplash.com/photo-1556910103-1f070b3b4a61?w=400&h=300&fit=crop',
+          documentation: [
+            {
+              id: 3,
+              title: 'Proses Fermentasi Sayuran',
+              description: 'Teknik fermentasi sayuran lokal dengan metode tradisional yang telah disesuaikan untuk kondisi modern. Fokus pada keamanan pangan dan pengembangan rasa yang unik.',
+              image: 'https://images.unsplash.com/photo-1556910103-1f070b3b4a61?w=600&h=400&fit=crop'
+            },
+            {
+              id: 4,
+              title: 'Pengemasan Produk',
+              description: 'Panduan pengemasan produk fermentasi yang higienis dan menarik, termasuk labelisasi dan penyimpanan yang tepat untuk menjaga kualitas produk.',
+              image: 'https://images.unsplash.com/photo-1585829365295-ab88945a5142?w=600&h=400&fit=crop'
+            }
+          ]
         },
         {
           name: 'Kompos & Soil Health',
           description: 'Membuat kompos dan memahami kesehatan tanah',
           duration: '1 hari',
           level: 'Pemula',
+          image: 'https://images.unsplash.com/photo-1585829365295-ab88945a5142?w=400&h=300&fit=crop',
+          documentation: [
+            {
+              id: 5,
+              title: 'Pembuatan Kompos',
+              description: 'Langkah-langkah praktis dalam membuat kompos dari sampah organik rumah tangga. Materi mencakup rasio C:N yang ideal, jenis bahan yang bisa digunakan, dan troubleshooting masalah umum.',
+              image: 'https://images.unsplash.com/photo-1585829365295-ab88945a5142?w=600&h=400&fit=crop'
+            }
+          ]
         },
       ],
     },
@@ -37,18 +126,45 @@ const Programs = () => {
           description: 'Dokumentasi dan penelitian varietas pangan lokal',
           duration: 'Ongoing',
           level: 'Lanjutan',
+          image: 'https://images.unsplash.com/photo-1585829365295-ab88945a5142?w=400&h=300&fit=crop',
+          documentation: [
+            {
+              id: 6,
+              title: 'Inventarisasi Varietas',
+              description: 'Proses inventarisasi dan dokumentasi varietas pangan lokal yang ditemukan di wilayah Jakarta dan sekitarnya. Termasuk metode identifikasi dan klasifikasi berdasarkan karakteristik morfologi.',
+              image: 'https://images.unsplash.com/photo-1585829365295-ab88945a5142?w=600&h=400&fit=crop'
+            }
+          ]
         },
         {
           name: 'Eksperimen Metode',
           description: 'Pengembangan metode pertanian inovatif',
           duration: '3 bulan',
           level: 'Menengah',
+          image: 'https://images.unsplash.com/photo-1592984337088-0b0b22950a2a?w=400&h=300&fit=crop',
+          documentation: [
+            {
+              id: 7,
+              title: 'Teknik Hidroponik Vertikal',
+              description: 'Pengembangan sistem hidroponik vertikal untuk ruang terbatas. Eksperimen mencakup desain sistem, pemilihan nutrisi, dan evaluasi hasil panen berbagai jenis sayuran.',
+              image: 'https://images.unsplash.com/photo-1592984337088-0b0b22950a2a?w=600&h=400&fit=crop'
+            }
+          ]
         },
         {
           name: 'Food System Mapping',
           description: 'Pemetaan sistem pangan di area perkotaan',
           duration: '6 bulan',
           level: 'Lanjutan',
+          image: 'https://images.unsplash.com/photo-1556910103-1f070b3b4a61?w=400&h=300&fit=crop',
+          documentation: [
+            {
+              id: 8,
+              title: 'Peta Distribusi Pangan',
+              description: 'Pembuatan peta distribusi pangan lokal di area perkotaan. Meliputi identifikasi jalur distribusi, titik kumpul, dan analisis gap antara produsen dan konsumen.',
+              image: 'https://images.unsplash.com/photo-1556910103-1f070b3b4a61?w=600&h=400&fit=crop'
+            }
+          ]
         },
       ],
     },
@@ -62,18 +178,45 @@ const Programs = () => {
           description: 'Budidaya sayur dan herba secara kolektif',
           duration: 'Musiman',
           level: 'Semua level',
+          image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop',
+          documentation: [
+            {
+              id: 9,
+              title: 'Perencanaan Tata Letak',
+              description: 'Perencanaan tata letak kebun komunitas yang optimal untuk hasil maksimal. Meliputi pola tanam, rotasi tanaman, dan penggunaan ruang vertikal untuk meningkatkan produktivitas.',
+              image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&h=400&fit=crop'
+            }
+          ]
         },
         {
           name: 'Produk Olahan',
           description: 'Pengolahan hasil panen menjadi produk bernilai',
           duration: 'Weekly',
           level: 'Menengah',
+          image: 'https://images.unsplash.com/photo-1556910103-1f070b3b4a61?w=400&h=300&fit=crop',
+          documentation: [
+            {
+              id: 10,
+              title: 'Pengolahan Hasil Panen',
+              description: 'Teknik pengolahan hasil panen segar menjadi produk olahan yang memiliki nilai tambah. Fokus pada metode pengawetan alami dan pengembangan produk inovatif.',
+              image: 'https://images.unsplash.com/photo-1556910103-1f070b3b4a61?w=600&h=400&fit=crop'
+            }
+          ]
         },
         {
           name: 'Seed Bank',
           description: 'Konservasi dan pengembangan benih lokal',
           duration: 'Ongoing',
           level: 'Semua level',
+          image: 'https://images.unsplash.com/photo-1585829365295-ab88945a5142?w=400&h=300&fit=crop',
+          documentation: [
+            {
+              id: 11,
+              title: 'Koleksi Benih Lokal',
+              description: 'Proses koleksi, dokumentasi, dan konservasi benih lokal. Meliputi teknik penyimpanan benih, uji viabilitas, dan pembuatan katalog benih komunitas.',
+              image: 'https://images.unsplash.com/photo-1585829365295-ab88945a5142?w=600&h=400&fit=crop'
+            }
+          ]
         },
       ],
     },
@@ -83,22 +226,70 @@ const Programs = () => {
       icon: 'education',
       programs: [
         {
+          name: 'Kuliah Tumbuhan',
+          description: 'Program edukasi berkala yang mengajak peserta mendalami ilmu tentang tumbuhan, pertanian urban, dan ekosistem pangan lokal.',
+          duration: 'Bulanan',
+          level: 'Semua level',
+          image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop',
+          documentation: [
+            {
+              id: 12,
+              title: 'Sesi Pembelajaran',
+              description: 'Kuliah Tumbuhan adalah program edukasi berkala yang mengajak peserta mendalami ilmu tentang tumbuhan, pertanian urban, dan ekosistem pangan lokal. Program ini diselenggarakan secara kolaboratif antara Selarasa dan berbagai narasumber dari kalangan akademisi, petani, hingga praktisi lingkungan.',
+              image: 'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=600&h=400&fit=crop'
+            },
+            {
+              id: 13,
+              title: 'Tujuan Program',
+              description: 'Meningkatkan literasi masyarakat urban tentang tumbuhan dan pertanian. Membangun kesadaran tentang pentingnya kemandirian pangan. Menciptakan ruang belajar terbuka yang inklusif. Mendokumentasikan pengetahuan lokal tentang tumbuhan.',
+              image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&h=400&fit=crop'
+            }
+          ]
+        },
+        {
           name: 'Kelas Anak',
           description: 'Pengenalan pertanian dan pangan untuk anak-anak',
           duration: 'Monthly',
           level: 'Anak-anak',
+          image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=400&h=300&fit=crop',
+          documentation: [
+            {
+              id: 14,
+              title: 'Pembelajaran Interaktif',
+              description: 'Metode pembelajaran interaktif untuk mengenalkan pertanian dan pangan kepada anak-anak. Meliputi permainan edukatif, eksperimen sederhana, dan kegiatan praktik di kebun.',
+              image: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&h=400&fit=crop'
+            }
+          ]
         },
         {
           name: 'Diskusi Publik',
           description: 'Seri diskusi tentang isu pangan dan ketahanan',
           duration: 'Monthly',
           level: 'Umum',
+          image: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=400&h=300&fit=crop',
+          documentation: [
+            {
+              id: 13,
+              title: 'Forum Diskusi',
+              description: 'Dokumentasi forum diskusi publik tentang isu pangan dan ketahanan lokal. Meliputi ringkasan diskusi, temuan kunci, dan rekomendasi untuk kebijakan pangan lokal.',
+              image: 'https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=600&h=400&fit=crop'
+            }
+          ]
         },
         {
           name: 'Study Visit',
           description: 'Kunjungan belajar ke berbagai inisiatif pangan',
           duration: 'Sekali',
           level: 'Semua level',
+          image: 'https://images.unsplash.com/photo-1592984337088-0b0b22950a2a?w=400&h=300&fit=crop',
+          documentation: [
+            {
+              id: 14,
+              title: 'Kunjungan Lapangan',
+              description: 'Dokumentasi kunjungan lapangan ke berbagai inisiatif pangan lokal. Meliputi observasi praktik, wawancara dengan praktisi, dan analisis pembelajaran dari setiap kunjungan.',
+              image: 'https://images.unsplash.com/photo-1592984337088-0b0b22950a2a?w=600&h=400&fit=crop'
+            }
+          ]
         },
       ],
     },
@@ -223,6 +414,12 @@ const Programs = () => {
                 <div className="grid grid-cols-1 md-grid-cols-3 gap-6">
                   {category.programs.map((program) => (
                     <div key={program.name} className="card">
+                      <img 
+                        src={program.image} 
+                        alt={program.name}
+                        className="w-full h-40 object-cover rounded-lg mb-4 cursor-pointer"
+                        onClick={() => setSelected(program)}
+                      />
                       <h4 className="text-xl font-semibold text-earth-900 dark:text-gray-100 mb-3">
                         {program.name}
                       </h4>
@@ -237,6 +434,38 @@ const Programs = () => {
                           {program.level}
                         </span>
                       </div>
+                      
+                      {/* Documentation */}
+                      {program.documentation && program.documentation.length > 0 && (
+                        <div className="mb-4">
+                          <h5 className="text-sm font-semibold text-earth-900 dark:text-gray-100 mb-2">Dokumentasi</h5>
+                          <div className="grid grid-cols-2 gap-2">
+                            {program.documentation.map((doc) => (
+                              <div 
+                                key={doc.id}
+                                className="relative group"
+                              >
+                                <img 
+                                  src={doc.image} 
+                                  alt={doc.title}
+                                  className="w-full h-20 object-cover rounded-lg cursor-pointer hover:scale-105 transition-transform"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    console.log('Documentation clicked:', doc);
+                                    console.log('About to setSelectedDoc with:', doc);
+                                    setSelectedDoc(doc);
+                                    console.log('selectedDoc after setSelectedDoc:', doc);
+                                  }}
+                                />
+                                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg flex items-center justify-center pointer-events-none">
+                                  <span className="text-white text-xs text-center px-2">Lihat Detail</span>
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                      
                       <button className="w-full btn-secondary text-center">
                         Daftar Program
                       </button>
@@ -405,6 +634,103 @@ const Programs = () => {
           </div>
         </div>
       </section>
+
+      {/* Program Popup Modal */}
+      {selected && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
+          <div className="bg-white rounded-xl p-4 max-w-lg w-full flex gap-4">
+            <img src={selected.image} className="w-1/2 rounded-lg" />
+            <div className="w-1/2">
+              <h2 className="font-bold">{selected.name}</h2>
+              <p className="text-sm mt-2">{selected.description}</p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* DEBUG: Show popup status */}
+      <div style={{position: 'fixed', top: 0, left: 0, zIndex: 9999, background: 'red', color: 'white', padding: '10px'}}>
+        selectedDoc: {selectedDoc ? 'YES' : 'NO'} | previewImage: {previewImage ? 'YES' : 'NO'}
+      </div>
+
+      {/* Documentation Popup Modal */}
+      {selectedDoc && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm"
+          onClick={() => setSelectedDoc(null)}
+        >
+          <div
+            className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-3 border-b border-gray-200">
+              <h2 className="text-lg font-bold text-gray-900">Dokumentasi Program</h2>
+              <button
+                onClick={() => setSelectedDoc(null)}
+                className="w-10 h-10 flex items-center justify-center bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+              >
+                <svg className="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Content - Responsive Layout */}
+            <div className="p-4 md:p-6">
+              <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+                
+                {/* Photo - Mobile: full width, Desktop: fixed width */}
+                <div className="w-full md:w-64 flex-shrink-0">
+                  <img
+                    src={selectedDoc.image}
+                    alt={selectedDoc.title}
+                    className="w-full h-48 md:h-64 object-cover rounded-xl cursor-pointer hover:scale-105 transition-transform"
+                    onClick={() => setPreviewImage(selectedDoc.image)}
+                  />
+                </div>
+
+                {/* Info */}
+                <div className="flex-1 flex flex-col gap-4">
+                  {/* Title */}
+                  <div>
+                    <h3 className="text-xl font-serif font-bold text-gray-900">
+                      {selectedDoc.title}
+                    </h3>
+                    <p className="text-sm text-gray-600 mt-1">
+                      Dokumentasi Program Selarasa
+                    </p>
+                  </div>
+
+                  {/* Description */}
+                  <div className="bg-amber-50 rounded-xl p-4">
+                    <h4 className="text-sm font-bold text-gray-800 uppercase tracking-wider mb-3">
+                      Deskripsi
+                    </h4>
+                    <p className="text-base text-gray-800 leading-relaxed font-medium">
+                      {selectedDoc.description}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Fullscreen Image Preview */}
+      {previewImage && (
+        <div
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4 animate-fade-in"
+          onClick={() => setPreviewImage(null)}
+        >
+          <img
+            src={previewImage}
+            alt="Preview"
+            className="max-w-full max-h-full object-contain animate-scale-in"
+          />
+        </div>
+      )}
     </div>
   );
 };

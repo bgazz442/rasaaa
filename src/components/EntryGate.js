@@ -3,22 +3,16 @@ import { Sprout, Send, Sparkles, Leaf, TreePine } from 'lucide-react';
 
 const questions = [
   {
-    id: 'kebun-jagakarsa',
-    text: 'Menurut kamu, berapa jumlah kebun yang ada di Kecamatan Jagakarsa?',
-    subtitle: 'Tebak jumlahnya dan ceritakan pendapatmu',
-    icon: <TreePine className="w-5 h-5 md:w-6 md:h-6 text-earth-sand" />,
-  },
-  {
-    id: 'masa-depan',
-    text: 'Menurutmu, seperti apa masa depan Selarasa?',
-    subtitle: 'Bagikan visi dan harapan Anda',
+    id: 'selarasa-apa',
+    text: 'menurut kamu selarasa itu apa',
+    subtitle: 'ceritakan pendapatmu tentang selarasa',
     icon: <Sprout className="w-5 h-5 md:w-6 md:h-6 text-earth-sand" />,
   },
   {
-    id: 'urban-farming',
-    text: 'Salah satu manfaat urban farming bagi masyarakat kota adalah',
-    subtitle: 'Bagikan pendapat Anda tentang pertanian kota',
-    icon: <Leaf className="w-5 h-5 md:w-6 md:h-6 text-earth-sand" />,
+    id: 'kebun-jagakarsa',
+    text: 'menurut kamu, berapa jumlah kebun yang ada di Kecamatan Jagakarsa?',
+    subtitle: 'Tebak jumlahnya dan ceritakan pendapatmu',
+    icon: <TreePine className="w-5 h-5 md:w-6 md:h-6 text-earth-sand" />,
   },
 ];
 

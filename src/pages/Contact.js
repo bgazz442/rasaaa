@@ -32,19 +32,19 @@ const Contact = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6 mb-12">
             {/* Email */}
             <a
-              href="mailto:selarasa.kolektif@gmail.com"
+              href="mailto:selarasagudskul@gmail.com"
               className="group bg-white rounded-2xl p-6 shadow-md border border-stone-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
             >
               <div className="w-12 h-12 bg-blue-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <Mail className="w-6 h-6 text-blue-600" />
               </div>
               <h3 className="font-serif font-bold text-earth-dark mb-1">Email</h3>
-              <p className="text-earth-dark/60 text-sm">selarasa.kolektif@gmail.com</p>
+              <p className="text-earth-dark/60 text-sm">selarasagudskul@gmail.com</p>
             </a>
 
             {/* WhatsApp */}
             <a
-              href="https://wa.me/6281292816844"
+              href="https://wa.me/6285811213937"
               target="_blank"
               rel="noopener noreferrer"
               className="group bg-white rounded-2xl p-6 shadow-md border border-stone-100 hover:shadow-xl hover:-translate-y-1 transition-all duration-300"
@@ -53,7 +53,7 @@ const Contact = () => {
                 <Phone className="w-6 h-6 text-green-600" />
               </div>
               <h3 className="font-serif font-bold text-earth-dark mb-1">WhatsApp</h3>
-              <p className="text-earth-dark/60 text-sm">+62 812 9281 6844</p>
+              <p className="text-earth-dark/60 text-sm">+62 858 1121 3937</p>
               <span className="inline-block mt-2 text-xs text-green-600 font-medium bg-green-50 px-2 py-1 rounded-full">
                 Chat sekarang →
               </span>
@@ -69,7 +69,7 @@ const Contact = () => {
               <div className="w-12 h-12 bg-amber-50 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
                 <MapPin className="w-6 h-6 text-amber-600" />
               </div>
-              <h3 className="font-serif font-bold text-earth-dark mb-1">Alamat Gudskul</h3>
+              <h3 className="font-serif font-bold text-earth-dark mb-1">Alamat</h3>
               <p className="text-earth-dark/60 text-sm">
                 Jl. Durian No.30A, RT.4/RW.4, Jagakarsa, Kec. Jagakarsa, Jakarta Selatan 12620
               </p>
@@ -136,6 +136,8 @@ const Contact = () => {
                   src="/foto-kegiatan-1.jpg"
                   alt="Lokasi Selarasa 1"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
               <div className="aspect-video overflow-hidden">
@@ -143,6 +145,8 @@ const Contact = () => {
                   src="/foto-kegiatan-2.png"
                   alt="Lokasi Selarasa 2"
                   className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
+                  loading="lazy"
+                  decoding="async"
                 />
               </div>
             </div>
